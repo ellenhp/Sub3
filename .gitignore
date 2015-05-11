@@ -1,0 +1,12 @@
+#cmake stuff
+CMakeCache.txt
+CPack*
+config.h
+*Makefile
+*cmake_install.cmake
+*CMakeFiles*
+
+
+#binaries
+sub3
+sub3_server
