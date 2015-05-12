@@ -1,0 +1,6 @@
+#include "config.hpp"
+
+int subVersionMajor = @Sub3_VERSION_MAJOR@;
+int subVersionMinor = @Sub3_VERSION_MINOR@;
+
+std::string subCommitHash = "@GIT_SHA1@";

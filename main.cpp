@@ -12,6 +12,12 @@
 
 int main(int argc, char** argv)
 {
+    std::cout << "Sub^3 version " << subVersionMajor << "." << subVersionMinor << std::endl;
+    if (subCommitHash.size() > 0)
+    {
+        std::cout << "Sub^3 commit hash: " << subCommitHash << std::endl;
+    }
+
     std::string ip = "127.0.0.1";
     uint16_t port = 22969;
     if (argc == 2)

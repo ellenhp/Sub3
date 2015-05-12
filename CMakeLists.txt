@@ -8,12 +8,18 @@ endif()
 
 add_definitions(-DDEBUG_MESSAGES)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+# Get the git commit hash
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+
 # Set version information in a config.h file
 set(Sub3_VERSION_MAJOR 0)
 set(Sub3_VERSION_MINOR 1)
 configure_file(
-  "${PROJECT_SOURCE_DIR}/config.h.in"
-  "${PROJECT_BINARY_DIR}/config.h"
+  "${PROJECT_SOURCE_DIR}/config.cpp.in"
+  "${PROJECT_BINARY_DIR}/config.cpp"
   )
 include_directories("${PROJECT_BINARY_DIR}")
 
@@ -22,6 +28,9 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/network")
 add_subdirectory("${PROJECT_SOURCE_DIR}/server")
 add_subdirectory("${PROJECT_SOURCE_DIR}/simulation")
 add_subdirectory("${PROJECT_SOURCE_DIR}/simulation/vessels")
+
+set(HEADERS ${HEADERS} ${PROJECT_SOURCE_DIR}/config.hpp)
+set(SOURCE ${SOURCE} ${PROJECT_SOURCE_DIR}/config.cpp)
 
 set(GAME_SOURCE ${SOURCE} ${PROJECT_SOURCE_DIR}/main.cpp)
 set(SERVER_SOURCE ${SOURCE} ${PROJECT_SOURCE_DIR}/server.cpp)
@@ -56,8 +65,7 @@ if(SFML_FOUND)
 endif()
 
 # Find USML
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-find_package(USML 2 REQUIRED)
+find_package(USML REQUIRED)
 if(USML_FOUND)
     include_directories(${USML_INCLUDE_DIRS})
     target_link_libraries(${GAME_NAME} ${USML_LIBRARIES})
