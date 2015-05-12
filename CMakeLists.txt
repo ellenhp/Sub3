@@ -18,10 +18,9 @@ get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 set(Sub3_VERSION_MAJOR 0)
 set(Sub3_VERSION_MINOR 1)
 configure_file(
-  "${PROJECT_SOURCE_DIR}/config.cpp.in"
-  "${PROJECT_BINARY_DIR}/config.cpp"
-  )
-include_directories("${PROJECT_BINARY_DIR}")
+    "${PROJECT_SOURCE_DIR}/config.cpp.in"
+    "${PROJECT_SOURCE_DIR}/config.cpp"
+)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/debug")
 add_subdirectory("${PROJECT_SOURCE_DIR}/network")
