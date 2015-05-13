@@ -4,6 +4,7 @@ set(SOURCE
    ${CMAKE_CURRENT_SOURCE_DIR}/SetPlayerIDMessage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SubSocket.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/UpdateMessage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/SetCurrentVesselMessage.cpp
    PARENT_SCOPE
 )
 set(HEADERS
@@ -13,5 +14,6 @@ set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/SpawnMessage.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SubSocket.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/UpdateMessage.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/SetCurrentVesselMessage.hpp
    PARENT_SCOPE
 )

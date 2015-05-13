@@ -16,6 +16,7 @@ template <class VesselClass> class SpawnMessage : public Message
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Message>(*this);
+        ar & vesselID;
         ar & initialState;
     }
 

@@ -1,6 +1,8 @@
 #include "Ocean.hpp"
 #include "Vessel.hpp"
 
+#include <boost/assert.hpp>
+
 Ocean* Ocean::oceanInst = NULL;
 
 Ocean::Ocean()
@@ -47,14 +49,21 @@ void Ocean::localResetOcean()
 
 void Ocean::localSpawnVessel(VesselID id, std::shared_ptr<Vessel> vessel)
 {
-    subDebug << "Ocean: Spawning player #" << id.getPlayer()<<"'s vessel " <<
-        id.getPlayerVesselID() << std::endl;
+    subDebug << "Ocean: Spawning " << id << std::endl;
+    BOOST_ASSERT_MSG(!vessels.count(id), "Fatal: Ocean already contains vessel to be spawned");
     vessels[id] = vessel;
+}
+
+void Ocean::localDespawnVessel(VesselID id)
+{
+    subDebug << "Ocean: Despawning " << id << std::endl;
+    BOOST_ASSERT_MSG(vessels.count(id), "Fatal: Ocean doesn't contain vessel to be despawned");
+    vessels.erase(id);
 }
 
 void Ocean::localUpdateVessel(VesselID id, VesselState state)
 {
-    subDebug << "Ocean: Updating player #" << id.getPlayer()<<"'s vessel " <<
-        id.getPlayerVesselID() << std::endl;
+    subDebug << "Ocean: Updating " << id << std::endl;
+    BOOST_ASSERT_MSG(vessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
     vessels[id]->setState(state);
 }

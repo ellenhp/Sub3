@@ -31,6 +31,7 @@ public:
     //For Message use only.
     void localResetOcean();
     void localSpawnVessel(VesselID id, std::shared_ptr<Vessel> vessel);
+    void localDespawnVessel(VesselID id);
     void localUpdateVessel(VesselID id, VesselState state);
 
 private:
