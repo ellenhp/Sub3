@@ -3,8 +3,3 @@
 Message::Message()
 {
 }
-
-VesselID Message::getVesselID()
-{
-    return vesselID;
-}

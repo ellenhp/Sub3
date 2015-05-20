@@ -6,19 +6,19 @@ BOOST_CLASS_EXPORT_GUID(SetPlayerIDMessage, "SetPlayerIDMessage")
 
 SetPlayerIDMessage::SetPlayerIDMessage()
 {
-    newPlayerID = -1;
+    mNewPlayerID = -1;
 }
 
 SetPlayerIDMessage::SetPlayerIDMessage(uint32_t newPlayerID) :
-    newPlayerID(newPlayerID)
+    mNewPlayerID(newPlayerID)
 {
 }
 
 void SetPlayerIDMessage::execute()
 {
     //Don't execute the packet if it wasn't constructed properly.
-    if (newPlayerID != -1)
+    if (mNewPlayerID != -1)
     {
-        Ocean::getOcean()->setPlayerID(PlayerID(newPlayerID));
+        Ocean::getOcean()->setPlayerID(PlayerID(mNewPlayerID));
     }
 }

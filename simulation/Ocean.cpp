@@ -27,7 +27,7 @@ std::vector<std::shared_ptr<Message> > Ocean::getInitiationMessages() const
 {
     //Loop through all the vessels and ask them for the messages required to duplicate them.
     std::vector<std::shared_ptr<Message> > messages;
-    for (auto const & kv : vessels)
+    for (auto const & kv : mVessels)
     {
         //Get spawn messages.
         auto newMessages = kv.second->getSpawnMessages(kv.first);
@@ -39,31 +39,31 @@ std::vector<std::shared_ptr<Message> > Ocean::getInitiationMessages() const
 
 void Ocean::setPlayerID(PlayerID id)
 {
-    player = id;
+    mPlayer = id;
 }
 
 void Ocean::localResetOcean()
 {
-    vessels.clear();
+    mVessels.clear();
 }
 
 void Ocean::localSpawnVessel(VesselID id, std::shared_ptr<Vessel> vessel)
 {
     subDebug << "Ocean: Spawning " << id << std::endl;
-    BOOST_ASSERT_MSG(!vessels.count(id), "Fatal: Ocean already contains vessel to be spawned");
-    vessels[id] = vessel;
+    BOOST_ASSERT_MSG(!mVessels.count(id), "Fatal: Ocean already contains vessel to be spawned");
+    mVessels[id] = vessel;
 }
 
 void Ocean::localDespawnVessel(VesselID id)
 {
     subDebug << "Ocean: Despawning " << id << std::endl;
-    BOOST_ASSERT_MSG(vessels.count(id), "Fatal: Ocean doesn't contain vessel to be despawned");
-    vessels.erase(id);
+    BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be despawned");
+    mVessels.erase(id);
 }
 
 void Ocean::localUpdateVessel(VesselID id, VesselState state)
 {
     subDebug << "Ocean: Updating " << id << std::endl;
-    BOOST_ASSERT_MSG(vessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
-    vessels[id]->setState(state);
+    BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
+    mVessels[id]->setState(state);
 }

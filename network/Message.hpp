@@ -26,13 +26,8 @@ class Message
 public:
     Message();
 
-    VesselID getVesselID();
-
     //This tells the packet to do whatever it needs to do to accomplish its mission.
     virtual void execute() = 0;
 
     std::map<std::string, std::string> otherData;
-
-protected:
-    VesselID vesselID;
 };

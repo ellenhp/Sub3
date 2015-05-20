@@ -16,8 +16,8 @@ template <class VesselClass> class SpawnMessage : public Message
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Message>(*this);
-        ar & vesselID;
-        ar & initialState;
+        ar & mVesselID;
+        ar & mInitialState;
     }
 
 public:
@@ -26,25 +26,24 @@ public:
     }
 
     SpawnMessage(VesselID vesselID, VesselState initialState) :
-        initialState(initialState)
+        mInitialState(initialState), mVesselID(vesselID)
     {
-        this->vesselID = vesselID;
     }
 
     void execute()
     {
         //Don't run the packet if it wasn't created properly.
-        if (this->vesselID.getPlayer() == -1)
+        if (mVesselID.getPlayer() == -1)
         {
             subDebug << "SpawnMessage: Player #-1 undefined" << std::endl;
             return;
         }
         std::shared_ptr<VesselClass> vessel = std::make_shared<VesselClass>();
-        Ocean::getOcean()->localSpawnVessel(vesselID, vessel);
+        Ocean::getOcean()->localSpawnVessel(mVesselID, vessel);
     }
 
-    VesselState initialState;
-
 private:
+    VesselState mInitialState;
+    VesselID mVesselID;
 
 };

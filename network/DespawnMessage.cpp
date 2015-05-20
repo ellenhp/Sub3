@@ -6,11 +6,11 @@ DespawnMessage::DespawnMessage()
 }
 
 DespawnMessage::DespawnMessage(VesselID vesselID) :
-    vesselID(vesselID)
+    mVesselID(vesselID)
 {
 }
 
 void DespawnMessage::execute()
 {
-    Ocean::getOcean()->localDespawnVessel(vesselID);
+    Ocean::getOcean()->localDespawnVessel(mVesselID);
 }

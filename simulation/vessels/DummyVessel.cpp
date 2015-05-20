@@ -9,13 +9,13 @@ DummyVessel::DummyVessel()
 
 VesselState DummyVessel::getNewState(float dt)
 {
-    return state;
+    return mState;
 }
 
 std::vector<std::shared_ptr<Message> > DummyVessel::getSpawnMessages(VesselID vesselID)
 {
     //Just return the one spawn message. Nothing special here.
     std::vector<std::shared_ptr<Message> > messages;
-    messages.push_back(std::make_shared<SpawnMessage<DummyVessel> >(vesselID, state));
+    messages.push_back(std::make_shared<SpawnMessage<DummyVessel> >(vesselID, mState));
     return messages;
 }

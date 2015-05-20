@@ -11,7 +11,7 @@ class SetPlayerIDMessage : public Message
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Message>(*this);
-        ar & newPlayerID;
+        ar & mNewPlayerID;
     }
 
 public:
@@ -21,5 +21,5 @@ public:
     void execute();
 
 private:
-    uint32_t newPlayerID;
+    uint32_t mNewPlayerID;
 };

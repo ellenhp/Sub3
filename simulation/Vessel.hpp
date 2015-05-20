@@ -20,5 +20,5 @@ public:
     virtual std::vector<std::shared_ptr<Message> > getSpawnMessages(VesselID vesselID) = 0;
 
 protected:
-    VesselState state;
+    VesselState mState;
 };

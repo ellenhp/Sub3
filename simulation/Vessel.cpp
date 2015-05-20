@@ -6,10 +6,10 @@ Vessel::Vessel()
 
 void Vessel::setState(VesselState state)
 {
-    this->state = state;
+    mState = state;
 }
 
 VesselState Vessel::getState()
 {
-    return state;
+    return mState;
 }

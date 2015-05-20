@@ -2,26 +2,26 @@
 
 PlayerID::PlayerID()
 {
-    playerID = -1;
+    mPlayerID = -1;
 }
 
 PlayerID::PlayerID(uint32_t playerID) :
-    playerID(playerID)
+    mPlayerID(playerID)
 {
 }
 
 bool PlayerID::isServer() const
 {
-    return playerID == 0;
+    return mPlayerID == 0;
 }
 
 uint32_t PlayerID::getID() const
 {
-    return playerID;
+    return mPlayerID;
 }
 
 std::ostream& operator<<(std::ostream& stream, PlayerID& playerID)
 {
-    stream << "Player " << playerID;
+    stream << "Player " << playerID.mPlayerID;
     return stream;
 }

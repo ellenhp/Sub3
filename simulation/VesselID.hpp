@@ -18,8 +18,8 @@ class VesselID
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-        ar & player;
-        ar & playerVesselID;
+        ar & mPlayer;
+        ar & mPlayerVesselID;
     }
 
 public:
@@ -36,6 +36,6 @@ public:
     friend std::ostream& operator<<(std::ostream& stream, VesselID& vesselID);
 
 private:
-    PlayerID player;
-    uint32_t playerVesselID;
+    PlayerID mPlayer;
+    uint32_t mPlayerVesselID;
 };

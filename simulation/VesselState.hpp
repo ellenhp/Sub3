@@ -10,10 +10,10 @@ class VesselState
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-        ar & location;
-        ar & velocity;
-        ar & heading;
-        ar & pitch;
+        ar & mLocation;
+        ar & mVelocity;
+        ar & mHeading;
+        ar & mPitch;
     }
 
 public:
@@ -26,9 +26,9 @@ public:
     double getPitch();
 
 private:
-    Position location;
-    double velocity;
+    Position mLocation;
+    double mVelocity;
 
-    double heading;
-    double pitch;
+    double mHeading;
+    double mPitch;
 };

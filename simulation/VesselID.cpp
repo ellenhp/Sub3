@@ -1,53 +1,53 @@
 #include "VesselID.hpp"
 
 VesselID::VesselID(PlayerID player, uint32_t playerVesselID) :
-    player(player), playerVesselID(playerVesselID)
+    mPlayer(player), mPlayerVesselID(playerVesselID)
 {
 }
 
 VesselID::VesselID()
 {
-    playerVesselID = -1;
+    mPlayerVesselID = -1;
 }
 
 PlayerID VesselID::getPlayer()
 {
-    return player;
+    return mPlayer;
 }
 
 uint32_t VesselID::getPlayerVesselID()
 {
-    return playerVesselID;
+    return mPlayerVesselID;
 }
 
 //This is used to let it be the key of a std::map
 bool operator<(const VesselID& left, const VesselID& right)
 {
-    if (left.player.getID() != right.player.getID())
+    if (left.mPlayer.getID() != right.mPlayer.getID())
     {
-        return left.player < right.player;
+        return left.mPlayer < right.mPlayer;
     }
     else
     {
-        return left.playerVesselID < right.playerVesselID;
+        return left.mPlayerVesselID < right.mPlayerVesselID;
     }
 }
 
 //This is used to let it be the key of a std::map
 bool operator>(const VesselID& left, const VesselID& right)
 {
-    if (left.player.getID() != right.player.getID())
+    if (left.mPlayer.getID() != right.mPlayer.getID())
     {
-        return left.player < right.player;
+        return left.mPlayer < right.mPlayer;
     }
     else
     {
-        return left.playerVesselID < right.playerVesselID;
+        return left.mPlayerVesselID < right.mPlayerVesselID;
     }
 }
 
 std::ostream& operator<<(std::ostream& stream, VesselID& vesselID)
 {
-    stream << vesselID.player << "'s vessel " << vesselID.playerVesselID;
+    stream << vesselID.mPlayer << "'s vessel " << vesselID.mPlayerVesselID;
     return stream;
 }

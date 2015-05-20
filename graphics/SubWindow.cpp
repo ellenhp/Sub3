@@ -5,7 +5,7 @@
 #include "MainMenu.hpp"
 
 SubWindow::SubWindow(sf::VideoMode videoMode) :
-    mRenderWindow(videoMode, "Sub^3"), currentScreen(NULL)
+    mRenderWindow(videoMode, "Sub^3"), mCurrentScreen(NULL)
 {
     //Don't let the window show itself until it can respond to events.
     mRenderWindow.setVisible(false);

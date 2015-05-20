@@ -11,7 +11,7 @@ class DespawnMessage : public Message
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Message>(*this);
-        ar & vesselID;
+        ar & mVesselID;
     }
 
 public:
@@ -21,5 +21,5 @@ public:
     void execute();
 
 private:
-    VesselID vesselID;
+    VesselID mVesselID;
 }

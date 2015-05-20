@@ -10,7 +10,8 @@ class UpdateMessage : public Message
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Message>(*this);
-        ar & newState;
+        ar & mVesselID;
+        ar & mNewState;
     }
 
 public:
@@ -19,8 +20,8 @@ public:
 
     void execute();
 
-    VesselState newState;
-
 private:
+    VesselState mNewState;
+    VesselID mVesselID;
 
 };

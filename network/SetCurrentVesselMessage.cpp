@@ -8,11 +8,11 @@ SetCurrentVesselMessage::SetCurrentVesselMessage()
 }
 
 SetCurrentVesselMessage::SetCurrentVesselMessage(VesselID vesselID) :
-    vesselID(vesselID)
+    mVesselID(vesselID)
 {
 }
 
 void SetCurrentVesselMessage::execute()
 {
-    //TODO: Tell make it known to the UI which vessel to control.
+    //TODO: Tell the UI which vessel to control.
 }

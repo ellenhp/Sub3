@@ -1,31 +1,31 @@
 #include "VesselState.hpp"
 
 VesselState::VesselState(Position pos, double v, double heading, double pitch) :
-    location(pos), velocity(v), heading(heading), pitch(pitch)
+    mLocation(pos), mVelocity(v), mHeading(heading), mPitch(pitch)
 {
 }
 
 VesselState::VesselState() :
-    location(0, 0, 0)
+    mLocation(0, 0, 0)
 {
 }
 
 Position VesselState::getLocation()
 {
-    return location;
+    return mLocation;
 }
 
 double VesselState::getVelocity()
 {
-    return velocity;
+    return mVelocity;
 }
 
 double VesselState::getHeading()
 {
-    return heading;
+    return mHeading;
 }
 
 double VesselState::getPitch()
 {
-    return pitch;
+    return mPitch;
 }

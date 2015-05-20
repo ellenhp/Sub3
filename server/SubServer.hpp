@@ -31,17 +31,17 @@ public:
     uint16_t getPort();
 
 private:
-    sf::TcpListener listener;
-    std::vector<std::shared_ptr<SubSocket> > sockets;
+    sf::TcpListener mListener;
+    std::vector<std::shared_ptr<SubSocket> > mSockets;
 
-    uint16_t port;
+    uint16_t mPort;
 
-    std::thread serverThread;
-    bool keepRunning;
-    std::mutex keepRunningMutex;
+    std::thread mServerThread;
+    bool mKeepRunning;
+    std::mutex mKeepRunningMutex;
 
-    bool isRunningVal;
-    uint32_t nextPlayerID;
+    bool mIsRunningVal;
+    uint32_t mNextPlayerID;
 
     void serverLoop();
 

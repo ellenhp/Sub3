@@ -21,12 +21,12 @@ public:
     void switchToScreen()
     {
         mDesktop.RemoveAll();
-        if (currentScreen)
+        if (mCurrentScreen)
         {
-            delete currentScreen;
+            delete mCurrentScreen;
         }
-        currentScreen = new NewScreen(this);
-        currentScreen->setupScreen(mDesktop);
+        mCurrentScreen = new NewScreen(this);
+        mCurrentScreen->setupScreen(mDesktop);
     }
 
     //Close the window.
@@ -41,5 +41,5 @@ private:
     sfg::Desktop mDesktop;
     sf::RenderWindow mRenderWindow;
 
-    SubScreen* currentScreen;
+    SubScreen* mCurrentScreen;
 };

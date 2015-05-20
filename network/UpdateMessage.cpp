@@ -9,12 +9,11 @@ UpdateMessage::UpdateMessage()
 }
 
 UpdateMessage::UpdateMessage(VesselID vesselID, VesselState newState) :
-    newState(newState)
+    mNewState(newState), mVesselID(vesselID)
 {
-    this->vesselID = vesselID;
 }
 
 void UpdateMessage::execute()
 {
-    Ocean::getOcean()->localUpdateVessel(vesselID, newState);
+    Ocean::getOcean()->localUpdateVessel(mVesselID, mNewState);
 }

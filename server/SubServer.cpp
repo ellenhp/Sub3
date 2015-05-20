@@ -7,70 +7,70 @@
 #include <SFML/Network/TcpSocket.hpp>
 
 SubServer::SubServer(uint16_t port) :
-    port(port), nextPlayerID(1)
+    mPort(port), mNextPlayerID(1)
 {
 }
 
 void SubServer::start()
 {
     //Don't let the listener block updating clients.
-    listener.setBlocking(false);
-    listener.listen(port);
+    mListener.setBlocking(false);
+    mListener.listen(mPort);
     //Run the server in a new thread.
-    serverThread = std::thread(&SubServer::serverLoop, this);
-    isRunningVal = true;
+    mServerThread = std::thread(&SubServer::serverLoop, this);
+    mIsRunningVal = true;
 }
 
 void SubServer::stop()
 {
     //Tell the server thread to stop.
-    keepRunningMutex.lock();
-    keepRunning = false;
-    keepRunningMutex.unlock();
+    mKeepRunningMutex.lock();
+    mKeepRunning = false;
+    mKeepRunningMutex.unlock();
 
     //Wait for the server thread to stop.
-    serverThread.join();
+    mServerThread.join();
 
-    listener.close();
+    mListener.close();
     //TODO send a close message?
-    sockets.clear();
+    mSockets.clear();
 }
 
 void SubServer::wait()
 {
     //Wait for the server thread to stop on its own (won't happen currently).
-    serverThread.join();
+    mServerThread.join();
 }
 
 bool SubServer::isRunning()
 {
-    return isRunningVal;
+    return mIsRunningVal;
 }
 
 uint16_t SubServer::getPort()
 {
-    return listener.getLocalPort();
+    return mListener.getLocalPort();
 }
 
 void SubServer::serverLoop()
 {
     std::vector<SubSocket> clients;
 
-    keepRunningMutex.lock();
-    while (keepRunning)
+    mKeepRunningMutex.lock();
+    while (mKeepRunning)
     {
-        keepRunningMutex.unlock();
+        mKeepRunningMutex.unlock();
 
         //Time to wake up after sleeping.
         auto end_time = std::chrono::steady_clock::now() + network_interval(1);
 
         auto newSocket = std::make_shared<sf::TcpSocket>();
-        while (listener.accept(*newSocket) == sf::Socket::Status::Done)
+        while (mListener.accept(*newSocket) == sf::Socket::Status::Done)
         {
             //Make a new sub socket
             SubSocket newSubSocket(newSocket);
-            auto setPlayerID = std::make_shared<SetPlayerIDMessage>(nextPlayerID);
-            nextPlayerID++;
+            auto setPlayerID = std::make_shared<SetPlayerIDMessage>(mNextPlayerID);
+            mNextPlayerID++;
 
             //Tell it who it is.
             newSubSocket << setPlayerID;
@@ -95,6 +95,7 @@ void SubServer::serverLoop()
         //Sleep for a bit.
         std::this_thread::sleep_until(end_time);
 
-        keepRunningMutex.lock();
+        mKeepRunningMutex.lock();
     }
+    mKeepRunningMutex.unlock();
 }

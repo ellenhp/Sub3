@@ -38,9 +38,9 @@ private:
     Ocean();
     static Ocean* oceanInst;
 
-    PlayerID player;
+    PlayerID mPlayer;
 
-    std::map<VesselID, std::shared_ptr<Vessel> > vessels;
-    uint32_t nextVesselHandle = 0;
+    std::map<VesselID, std::shared_ptr<Vessel> > mVessels;
+    uint32_t mNextVesselHandle = 0;
 
 };

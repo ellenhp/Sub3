@@ -21,9 +21,9 @@ public:
     friend bool operator>>(SubSocket& socket, std::shared_ptr<Message>& message);
 
 private:
-    std::shared_ptr<sf::TcpSocket> socket;
+    std::shared_ptr<sf::TcpSocket> mSocket;
 
-    std::deque<std::shared_ptr<Message> > queue;
+    std::deque<std::shared_ptr<Message> > mQueue;
 
     void queuePackets();
 
