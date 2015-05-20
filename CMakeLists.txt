@@ -23,6 +23,7 @@ configure_file(
 )
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/debug")
+add_subdirectory("${PROJECT_SOURCE_DIR}/graphics")
 add_subdirectory("${PROJECT_SOURCE_DIR}/network")
 add_subdirectory("${PROJECT_SOURCE_DIR}/server")
 add_subdirectory("${PROJECT_SOURCE_DIR}/simulation")
@@ -61,6 +62,14 @@ if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${GAME_NAME} ${SFML_LIBRARIES})
     target_link_libraries(${SERVER_NAME} ${SFML_LIBRARIES})
+endif()
+
+# Find SFGUI
+find_package(SFGUI)
+if(SFGUI_FOUND)
+    include_directories(${SFGUI_INCLUDE_DIR})
+    target_link_libraries(${GAME_NAME} ${SFGUI_LIBRARY})
+    target_link_libraries(${SERVER_NAME} ${SFGUI_LIBRARY})
 endif()
 
 # Find USML

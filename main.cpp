@@ -3,7 +3,9 @@
 
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
+#include "graphics/SubWindow.hpp"
 #include "network/SubSocket.hpp"
 #include "network/Message.hpp"
 #include "simulation/Ocean.hpp"
@@ -45,19 +47,8 @@ int main(int argc, char** argv)
 
     SubSocket subSocket(tcpSocket);
 
-    while (true)
-    {
-        auto end_time = std::chrono::steady_clock::now() + network_interval(1);
-
-        std::shared_ptr<Message> message = NULL;
-        while (subSocket.hasPackets())
-        {
-            subSocket >> message;
-            message->execute();
-        }
-
-        std::this_thread::sleep_until(end_time);
-    }
+    SubWindow subWindow(sf::VideoMode(800, 600));
+    subWindow.run();
 
     return 0;
 }
