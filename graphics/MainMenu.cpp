@@ -1,6 +1,7 @@
 #include "MainMenu.hpp"
 
 #include "SubWindow.hpp"
+#include "LicenseScreen.hpp"
 
 #include <SFGUI/Widgets.hpp>
 
@@ -22,6 +23,9 @@ void MainMenu::setupScreen(sfg::Desktop& desktop)
     auto quitButton = sfg::Button::Create("Quit Game");
 
     //Hook up event handlers.
+    licenseButton->GetSignal(sfg::Button::OnLeftClick).Connect(
+        std::bind(&MainMenu::licenseHandler, this)
+    );
     quitButton->GetSignal(sfg::Button::OnLeftClick).Connect(
         std::bind(&MainMenu::quitHandler, this)
     );
@@ -50,4 +54,9 @@ void MainMenu::setupScreen(sfg::Desktop& desktop)
 void MainMenu::quitHandler()
 {
     mSubWindow->quit();
+}
+
+void MainMenu::licenseHandler()
+{
+    mSubWindow->switchToScreen<LicenseScreen>();
 }

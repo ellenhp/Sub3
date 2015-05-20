@@ -2,6 +2,7 @@ set(SOURCE
    ${SOURCE}
    ${CMAKE_CURRENT_SOURCE_DIR}/SubWindow.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/MainMenu.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/LicenseScreen.cpp
    PARENT_SCOPE
 )
 set(HEADERS
@@ -9,5 +10,6 @@ set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/SubWindow.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SubScreen.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/MainMenu.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/LicenseScreen.hpp
    PARENT_SCOPE
 )

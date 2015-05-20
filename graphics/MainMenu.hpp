@@ -15,4 +15,5 @@ private:
     SubWindow* mSubWindow;
 
     void quitHandler();
+    void licenseHandler();
 };
