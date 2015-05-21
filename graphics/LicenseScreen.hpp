@@ -2,6 +2,8 @@
 
 #include "SubScreen.hpp"
 
+#include <SFGUI/Widgets.hpp>
+
 class SubWindow;
 
 //This class is the license/credits screen for the game.
@@ -11,8 +13,12 @@ public:
     LicenseScreen(SubWindow* subWindow);
     void setupScreen(sfg::Desktop& desktop);
 
+    void updateScreen();
+
 private:
     SubWindow* mSubWindow;
+
+    sfg::Window::Ptr mLicenseWindow;
 
     void backHandler();
 };

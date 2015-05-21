@@ -5,7 +5,8 @@
 
 //Keep around the SubWindow pointer for event handling purposes.
 MainMenu::MainMenu(SubWindow* subWindow) :
-    mSubWindow(subWindow), mConnectWindow(NULL), mIpEntry(NULL), mPortEntry(NULL)
+    mSubWindow(subWindow), mMainWindow(NULL), mConnectWindow(NULL),
+    mIpEntry(NULL), mPortEntry(NULL)
 {
 }
 
@@ -39,19 +40,31 @@ void MainMenu::setupScreen(sfg::Desktop& desktop)
     box->SetSpacing(10);
 
     //Put the box in a window.
-    auto window = sfg::Window::Create(0);
-    window->Add(box);
+    mMainWindow = sfg::Window::Create(0);
+    mMainWindow->Add(box);
 
-    //Center the window then add it to the desktop.
-    float width = window->GetAllocation().width;
-    float height = window->GetAllocation().height;
-    float winX = (mSubWindow->getWidth() - width) / 2;
-    float winY = (mSubWindow->getHeight() - height) / 2;
-    window->SetAllocation({winX, winY, width, height});
-
-    desktop.Add(window);
+    //Add it to the desktop.
+    desktop.Add(mMainWindow);
 
     mDesktop = &desktop;
+}
+
+void MainMenu::updateScreen()
+{
+    static int lastWidth = 0;
+    static int lastHeight = 0;
+    if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
+    {
+        //Center the window.
+        float width = mMainWindow->GetAllocation().width;
+        float height = mMainWindow->GetAllocation().height;
+        float winX = (mSubWindow->getWidth() - width) / 2;
+        float winY = (mSubWindow->getHeight() - height) / 2;
+        mMainWindow->SetAllocation({winX, winY, width, height});
+
+        lastWidth = mSubWindow->getWidth();
+        lastHeight = mSubWindow->getHeight();
+    }
 }
 
 void MainMenu::playHandler()
@@ -103,6 +116,8 @@ void MainMenu::playHandler()
 
 void MainMenu::licenseHandler()
 {
+    mMainWindow = NULL;
+    mConnectWindow = NULL;
     mSubWindow->switchToScreen<LicenseScreen>();
 }
 

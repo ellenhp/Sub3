@@ -13,9 +13,12 @@ public:
     MainMenu(SubWindow* subWindow);
     void setupScreen(sfg::Desktop& desktop);
 
+    void updateScreen();
+
 private:
     SubWindow* mSubWindow;
 
+    sfg::Window::Ptr mMainWindow;
     sfg::Window::Ptr mConnectWindow;
 
     sfg::Entry::Ptr mIpEntry;
