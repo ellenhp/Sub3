@@ -1,13 +1,24 @@
 #include "LoadingScreen.hpp"
 
 #include "SubWindow.hpp"
+#include "../simulation/GameManager.hpp"
 
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 
 #include <chrono>
 
+#include <usml/ocean/ocean_shared.h>
+#include <usml/waveq3d/waveq3d.h>
+#include <usml/netcdf/netcdf_files.h>
+
+#include <boost/assert.hpp>
+
 using std::chrono::steady_clock;
+
+using usml::netcdf::netcdf_woa;
+using usml::netcdf::netcdf_bathy;
+using namespace usml::ocean;
 
 LoadingScreen::LoadingScreen(SubWindow* subWindow) :
     mSubWindow(subWindow), mLoadingWindow(NULL), mLoadingDone(false), mLaunchGame(false)
@@ -73,7 +84,7 @@ void LoadingScreen::updateScreen()
 
     if (launchGame)
     {
-        mSubWindow->quit();
+        //mSubWindow->quit();
     }
 
     centerWindow();
@@ -92,12 +103,6 @@ void LoadingScreen::centerWindow()
 void LoadingScreen::doLoading()
 {
     mLoadingMutex.lock();
-    mLoadingText = "Loading USML...";
-    mLoadingMutex.unlock();
-
-    //TODO: Load the temperature and salinity data and create an ocean_shared object
-
-    mLoadingMutex.lock();
     mLoadingText = "Connecting to Game...";
     auto copyIP = mIpAddress;
     auto copyPort = mPortNumber;
@@ -108,37 +113,110 @@ void LoadingScreen::doLoading()
 
     mGameSocket = std::make_shared<SubSocket>(tcpSocket);
 
+    auto gameManager = std::make_shared<GameManager>();
+    GameManager::setCurrent(gameManager);
+
     //Wait for the set player id message (or any others) to verify we connected successfully.
-    bool hasPackets = false;
+    bool isInitialized = false;
     auto startTime = steady_clock::now();
     while (steady_clock::now() - startTime < std::chrono::seconds(5))
     {
         auto end_time = steady_clock::now() + std::chrono::milliseconds(100);
 
-        if (mGameSocket->hasPackets())
+        std::shared_ptr<Message> message = NULL;
+        while (mGameSocket->hasPackets())
         {
-            hasPackets = true;
+            BOOST_ASSERT_MSG(*mGameSocket >> message, "Fatal: Failed to load init message");
+            message->execute();
+        }
+
+        if (gameManager->isInitialized())
+        {
+            isInitialized = true;
             break;
         }
 
         std::this_thread::sleep_until(end_time);
     }
 
-    //Let the user know if we connected successfully
-    if (hasPackets)
-    {
-        mLoadingMutex.lock();
-        mLoadingText = "Done!";
-        mLoadingDone = true;
-        mLoadingMutex.unlock();
-    }
-    else
+    //Let the user know if the connection timed out.
+    if (!isInitialized)
     {
         mLoadingMutex.lock();
         mLoadingText = "Connection Timed Out.";
         mLoadingDone = true;
         mLoadingMutex.unlock();
+
+        //Give the user some time to read the message we just showed them.
+        //But make sure we keep pulling messages off the networking buffer.
+        auto endTime = steady_clock::now() + std::chrono::milliseconds(1500);
+        while (steady_clock::now() < endTime)
+        {
+            mGameSocket->hasPackets();
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+
+        //Now we'll let the main thread know we're ready.
+        mLoadingMutex.lock();
+        mLaunchGame = true;
+        mLoadingMutex.unlock();
+        return;
     }
+    else
+    {
+        //TODO: wait until we get a message that tells us what month it is and where we are.
+    }
+
+    mLoadingMutex.lock();
+    mLoadingText = "Loading Ocean Temperature Data...";
+    mLoadingMutex.unlock();
+
+    //TODO: use correct location.
+    const double lat1 = 30.0;
+    const double lat2 = 46.0;
+    const double lng1 = -8.0;
+    const double lng2 = 37.0;
+
+    //Load temperature and salinity.
+    //TODO: Use the correct month.
+    netcdf_woa* temperature = new netcdf_woa(
+        "usml/woa09/temperature_seasonal_1deg.nc",
+        "usml/woa09/temperature_monthly_1deg.nc",
+        10, lat1, lat2, lng1, lng2);
+
+    mLoadingMutex.lock();
+    mLoadingText = "Loading Ocean Salinity Data...";
+    mLoadingMutex.unlock();
+
+    netcdf_woa* salinity = new netcdf_woa(
+        "usml/woa09/salinity_seasonal_1deg.nc",
+        "usml/woa09/salinity_monthly_1deg.nc",
+        10, lat1, lat2, lng1, lng2);
+
+    //Compute sound speed.
+    profile_model* profile = new profile_lock(new profile_grid<double,3>(
+        data_grid_mackenzie::construct(temperature, salinity)));
+
+    mLoadingMutex.lock();
+    mLoadingText = "Loading Bathymetry...";
+    mLoadingMutex.unlock();
+
+    //Load bathymetry.
+    boundary_model* bottom = new boundary_lock(new boundary_grid<double,2>(new netcdf_bathy(
+        "usml/bathymetry/ETOPO1_Ice_g_gmt4.grd",
+        lat1, lat2, lng1, lng2)));
+
+    //TODO: Get weather data somehow?
+    boundary_model* surface = new boundary_lock(new boundary_flat());
+
+    //Updated the ocean_shared reference.
+    ocean_shared::reference ocean(new ocean_model(surface, bottom, profile));
+    ocean_shared::update(ocean);
+
+    mLoadingMutex.lock();
+    mLoadingText = "Done!";
+    mLoadingDone = true;
+    mLoadingMutex.unlock();
 
     //Give the user some time to read the message we just showed them.
     //But make sure we keep pulling messages off the networking buffer.

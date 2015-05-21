@@ -6,6 +6,8 @@ config.cpp
 *cmake_install.cmake
 *CMakeFiles*
 
+#oceanic data
+usml/*
 
 #binaries
 sub3

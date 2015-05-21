@@ -5,7 +5,8 @@
 
 Ocean* Ocean::oceanInst = NULL;
 
-Ocean::Ocean()
+Ocean::Ocean() :
+    mMonth(Month::Undefined)
 {
 }
 
@@ -37,11 +38,6 @@ std::vector<std::shared_ptr<Message> > Ocean::getInitiationMessages() const
     return messages;
 }
 
-void Ocean::setPlayerID(PlayerID id)
-{
-    mPlayer = id;
-}
-
 void Ocean::localResetOcean()
 {
     mVessels.clear();
@@ -66,4 +62,25 @@ void Ocean::localUpdateVessel(VesselID id, VesselState state)
     subDebug << "Ocean: Updating " << id << std::endl;
     BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
     mVessels[id]->setState(state);
+}
+
+void Ocean::localSetMonth(Ocean::Month month)
+{
+    mMonth = month;
+}
+
+Ocean::Month Ocean::getMonth()
+{
+    return mMonth;
+}
+
+bool Ocean::getHasVessel(VesselID id)
+{
+    return mVessels.count(id) != 0;
+}
+
+VesselState Ocean::getState(VesselID id)
+{
+    BOOST_ASSERT_MSG(getHasVessel(id), "Fatal: Ocean doesn't contain vessel to get state of");
+    return mVessels.at(id)->getState();
 }

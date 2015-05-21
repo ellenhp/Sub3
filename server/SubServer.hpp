@@ -5,7 +5,10 @@
 #include <mutex>
 #include <chrono>
 
-#include "SFML/Network/TcpListener.hpp"
+#include <SFML/Network/TcpListener.hpp>
+
+#include "../simulation/PlayerID.hpp"
+#include "../network/SubSocket.hpp"
 
 typedef std::chrono::duration<int, std::ratio<1, 10>> network_interval;
 
@@ -43,6 +46,10 @@ private:
     bool mIsRunningVal;
     uint32_t mNextPlayerID;
 
+    std::map<PlayerID, std::shared_ptr<SubSocket>> mClients;
+
     void serverLoop();
+
+    void spawnVesselForPlayer(PlayerID player);
 
 };

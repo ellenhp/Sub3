@@ -2,8 +2,8 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "../Sub3.hpp"
 #include "Message.hpp"
+#include "../Sub3.hpp"
 #include "../simulation/VesselState.hpp"
 #include "../simulation/Ocean.hpp"
 

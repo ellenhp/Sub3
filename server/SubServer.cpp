@@ -1,7 +1,9 @@
 #include "SubServer.hpp"
-#include "../network/SubSocket.hpp"
+
 #include "../network/SetPlayerIDMessage.hpp"
+#include "../network/SetCurrentVesselMessage.hpp"
 #include "../simulation/Ocean.hpp"
+#include "../simulation/vessels/DummyVessel.hpp"
 #include "../Sub3.hpp"
 
 #include <SFML/Network/TcpSocket.hpp>
@@ -54,8 +56,6 @@ uint16_t SubServer::getPort()
 
 void SubServer::serverLoop()
 {
-    std::vector<SubSocket> clients;
-
     mKeepRunningMutex.lock();
     while (mKeepRunning)
     {
@@ -68,26 +68,31 @@ void SubServer::serverLoop()
         while (mListener.accept(*newSocket) == sf::Socket::Status::Done)
         {
             //Make a new sub socket
-            SubSocket newSubSocket(newSocket);
+            auto newSubSocket = std::make_shared<SubSocket>(newSocket);
             auto setPlayerID = std::make_shared<SetPlayerIDMessage>(mNextPlayerID);
+            PlayerID newPlayerID(mNextPlayerID);
             mNextPlayerID++;
 
             //Tell it who it is.
-            newSubSocket << setPlayerID;
+            *newSubSocket << setPlayerID;
 
             //Bring it up to speed.
             for (std::shared_ptr<Message> message : Ocean::getOcean()->getInitiationMessages())
             {
-                newSubSocket << message;
+                *newSubSocket << message;
             }
 
             //Add it to clients.
-            clients.push_back(newSubSocket);
+            mClients[newPlayerID] = newSubSocket;
+
+            spawnVesselForPlayer(newPlayerID);
+
+            subDebug << "New player: " << newPlayerID << std::endl;
         }
 
         //TODO update the ocean, run AI.
 
-        for (auto& socket : clients)
+        for (auto& clientKV : mClients)
         {
             //TODO update all the clients.
         }
@@ -98,4 +103,21 @@ void SubServer::serverLoop()
         mKeepRunningMutex.lock();
     }
     mKeepRunningMutex.unlock();
+}
+
+void SubServer::spawnVesselForPlayer(PlayerID player)
+{
+    std::vector<std::shared_ptr<Message>> messages;
+    //Create a message for spawning the new vessel.
+    VesselID newVesselID(player, 0); //Guaranteed to be the first vessel spawned by this player
+    auto spawnMessage = std::make_shared<SpawnMessage<DummyVessel>>(newVesselID, VesselState());
+
+    //Let everybody know that we're spawning something.
+    for (auto& clientKV : mClients)
+    {
+        *clientKV.second << spawnMessage;
+    }
+
+    //Tell the client which vessel it can control.
+    *mClients[player] << std::make_shared<SetCurrentVesselMessage>(newVesselID);
 }
