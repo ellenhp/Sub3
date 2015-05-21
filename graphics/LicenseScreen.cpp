@@ -16,7 +16,7 @@ LicenseScreen::LicenseScreen(SubWindow* subWindow) :
 void LicenseScreen::setupScreen(sfg::Desktop& desktop)
 {
     //sfg::Box is for layout purposes.
-    auto box = sfg::Box::Create( sfg::Box::Orientation::VERTICAL );
+    auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 
     //Back button.
     auto backButton = sfg::Button::Create("Back");

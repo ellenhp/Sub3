@@ -2,6 +2,8 @@
 
 #include "SubScreen.hpp"
 
+#include <SFGUI/Widgets.hpp>
+
 class SubWindow;
 
 //This class is the main menu for the game.
@@ -14,6 +16,17 @@ public:
 private:
     SubWindow* mSubWindow;
 
-    void quitHandler();
+    sfg::Window::Ptr mConnectWindow;
+
+    sfg::Entry::Ptr mIpEntry;
+    sfg::Entry::Ptr mPortEntry;
+
+    sfg::Desktop* mDesktop;
+
+    void playHandler();
     void licenseHandler();
+    void quitHandler();
+
+    void playConnectHandler();
+    void playCancelHandler();
 };

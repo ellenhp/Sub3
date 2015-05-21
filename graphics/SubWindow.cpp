@@ -33,6 +33,12 @@ void SubWindow::run()
         //Update the desktop.
         mDesktop.Update(1.0f);
 
+        //Update the screen.
+        if (mCurrentScreen)
+        {
+            mCurrentScreen->updateScreen();
+        }
+
         //Draw the GUI.
         mRenderWindow.clear();
         mGui.Display(mRenderWindow);
