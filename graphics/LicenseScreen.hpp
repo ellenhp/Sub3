@@ -13,13 +13,12 @@ public:
     LicenseScreen(SubWindow* subWindow);
     virtual ~LicenseScreen();
 
-    void setupScreen(sfg::Desktop& desktop);
+    void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
 
     void updateScreen();
 
 private:
     SubWindow* mSubWindow;
-
     sfg::Window::Ptr mLicenseWindow;
 
     void backHandler();

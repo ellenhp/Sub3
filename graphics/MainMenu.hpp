@@ -13,7 +13,7 @@ public:
     MainMenu(SubWindow* subWindow);
     virtual ~MainMenu();
 
-    void setupScreen(sfg::Desktop& desktop);
+    void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
 
     void updateScreen();
 

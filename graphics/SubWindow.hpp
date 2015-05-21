@@ -18,7 +18,7 @@ public:
 
     //Tempate function to switch to a new SubScreen.
     template<typename NewScreen>
-    void switchToScreen()
+    void switchToScreen(std::vector<std::string> args = {})
     {
         mDesktop.RemoveAll();
         if (mCurrentScreen)
@@ -26,7 +26,7 @@ public:
             delete mCurrentScreen;
         }
         mCurrentScreen = new NewScreen(this);
-        mCurrentScreen->setupScreen(mDesktop);
+        mCurrentScreen->setupScreen(mDesktop, args);
     }
 
     //Close the window.

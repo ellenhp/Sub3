@@ -16,7 +16,7 @@ LicenseScreen::~LicenseScreen()
     mLicenseWindow = NULL;
 }
 
-void LicenseScreen::setupScreen(sfg::Desktop& desktop)
+void LicenseScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 {
     //sfg::Box is for layout purposes.
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);

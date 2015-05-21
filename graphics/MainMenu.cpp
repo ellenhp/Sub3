@@ -17,7 +17,7 @@ MainMenu::~MainMenu()
     mMainWindow = NULL;
 }
 
-void MainMenu::setupScreen(sfg::Desktop& desktop)
+void MainMenu::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 {
     //sfg::Box is for layout purposes.
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -75,8 +75,8 @@ void MainMenu::playHandler()
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 
     //Play window widgets.
-    auto ipEntry = sfg::Entry::Create("127.0.0.1");
-    auto portEntry = sfg::Entry::Create("22969");
+    mIpEntry = sfg::Entry::Create("127.0.0.1");
+    mPortEntry = sfg::Entry::Create("22969");
 
     auto buttonBox = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
     auto cancelButton = sfg::Button::Create("Cancel");
@@ -92,9 +92,9 @@ void MainMenu::playHandler()
 
     //Layout the buttons.
     box->Pack(sfg::Label::Create("IP Address:"));
-    box->Pack(ipEntry);
+    box->Pack(mIpEntry);
     box->Pack(sfg::Label::Create("Port Number:"));
-    box->Pack(portEntry);
+    box->Pack(mPortEntry);
     buttonBox->Pack(cancelButton);
     buttonBox->Pack(connectButton);
     buttonBox->SetSpacing(10);
@@ -128,8 +128,16 @@ void MainMenu::quitHandler()
 
 void MainMenu::playConnectHandler()
 {
-    mDesktop->Remove(mConnectWindow);
-    mSubWindow->switchToScreen<LoadingScreen>();
+    int port = std::stoi((std::string)mPortEntry->GetText());
+    if (port > 0 && port < 0xFFFF)
+    {
+        mDesktop->Remove(mConnectWindow);
+        mSubWindow->switchToScreen<LoadingScreen>({mIpEntry->GetText(), mPortEntry->GetText()});
+    }
+    else
+    {
+        //TODO: Let the user know why nothing happened
+    }
 }
 
 void MainMenu::playCancelHandler()

@@ -49,7 +49,7 @@ target_compile_features(${GAME_NAME} PRIVATE cxx_range_for)
 target_compile_features(${SERVER_NAME} PRIVATE cxx_range_for)
 
 # Find Boost
-find_package(Boost COMPONENTS serialization)
+find_package(Boost COMPONENTS serialization system)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     target_link_libraries(${GAME_NAME} ${Boost_LIBRARIES})
@@ -78,6 +78,14 @@ if(USML_FOUND)
     include_directories(${USML_INCLUDE_DIRS})
     target_link_libraries(${GAME_NAME} ${USML_LIBRARIES})
     target_link_libraries(${SERVER_NAME} ${USML_LIBRARIES})
+endif()
+
+# Find NetCDF
+find_package(NetCDF REQUIRED)
+if(NETCDF_FOUND)
+    include_directories(${NETCDF_INCLUDES})
+    target_link_libraries(${GAME_NAME} ${NETCDF_LIBRARIES})
+    target_link_libraries(${SERVER_NAME} ${NETCDF_LIBRARIES})
 endif()
 
 # Install target

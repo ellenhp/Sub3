@@ -4,6 +4,14 @@
 
 #include <SFGUI/Widgets.hpp>
 
+#include <thread>
+#include <mutex>
+
+#include <usml/ocean/ocean_shared.h>
+
+#include "../network/SubSocket.hpp"
+#include "../Sub3.hpp"
+
 class SubWindow;
 
 //This class opens a connection and initializes USML
@@ -13,14 +21,34 @@ public:
     LoadingScreen(SubWindow* subWindow);
     virtual ~LoadingScreen();
 
-    void setupScreen(sfg::Desktop& desktop);
+    void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
 
     void updateScreen();
 
 private:
     SubWindow* mSubWindow;
 
+    //Stuff required to load and connect asynchronously.
+    std::unique_ptr<std::thread> mLoadingThread;
+    std::mutex mLoadingMutex;
+    bool mLoadingDone;
+    bool mLaunchGame;
+
+    std::shared_ptr<SubSocket> mGameSocket;
+    std::shared_ptr<usml::ocean::ocean_shared> mGameOcean;
+
+    std::string mLoadingText;
+
+    sfg::Spinner::Ptr mSpinner;
     sfg::Label::Ptr mLabel;
     sfg::Window::Ptr mLoadingWindow;
+
+    std::string mIpAddress;
+    uint16_t mPortNumber;
+
+    void centerWindow();
+
+    void doLoading();
+
 
 };
