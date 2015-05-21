@@ -2,6 +2,7 @@
 
 #include "SubWindow.hpp"
 #include "LicenseScreen.hpp"
+#include "LoadingScreen.hpp"
 
 //Keep around the SubWindow pointer for event handling purposes.
 MainMenu::MainMenu(SubWindow* subWindow) :
@@ -130,6 +131,8 @@ void MainMenu::playConnectHandler()
 {
     mDesktop->Remove(mConnectWindow);
     mConnectWindow = NULL;
+    mMainWindow = NULL;
+    mSubWindow->switchToScreen<LoadingScreen>();
 }
 
 void MainMenu::playCancelHandler()

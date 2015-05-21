@@ -4,6 +4,7 @@ set(SOURCE
    ${CMAKE_CURRENT_SOURCE_DIR}/SubScreen.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/MainMenu.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/LicenseScreen.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
    PARENT_SCOPE
 )
 set(HEADERS
@@ -12,5 +13,6 @@ set(HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/SubScreen.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/MainMenu.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/LicenseScreen.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.hpp
    PARENT_SCOPE
 )

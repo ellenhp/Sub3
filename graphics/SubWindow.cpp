@@ -1,8 +1,11 @@
 #include "SubWindow.hpp"
 
+#include <chrono>
+
 #include <SFML/Window/Event.hpp>
 
 #include "MainMenu.hpp"
+#include "../Sub3.hpp"
 
 SubWindow::SubWindow(sf::VideoMode videoMode) :
     mRenderWindow(videoMode, "Sub^3"), mCurrentScreen(NULL)
@@ -13,6 +16,8 @@ SubWindow::SubWindow(sf::VideoMode videoMode) :
 
 void SubWindow::run()
 {
+    using seconds = std::chrono::duration<float, std::ratio<1, 1>>;
+
     //We're ready to show the window.
     mRenderWindow.setVisible(true);
 
@@ -20,6 +25,9 @@ void SubWindow::run()
 
     //We always want to show the main menu first.
     switchToScreen<MainMenu>();
+
+    //This clock is used for the SFGUI Update method.
+    auto startTime = std::chrono::steady_clock::now();
 
     //Handle events indefinitely.
     sf::Event event;
@@ -31,7 +39,10 @@ void SubWindow::run()
             }
         }
         //Update the desktop.
-        mDesktop.Update(1.0f);
+        auto endTime = std::chrono::steady_clock::now();
+        auto duration = endTime - startTime;
+        mDesktop.Update(seconds(duration).count());
+        startTime = std::chrono::steady_clock::now();
 
         //Update the screen.
         if (mCurrentScreen)
