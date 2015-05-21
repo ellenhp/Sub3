@@ -6,6 +6,8 @@
 class SubScreen
 {
 public:
+    virtual ~SubScreen();
+
     virtual void setupScreen(sfg::Desktop& desktop) = 0;
 
     virtual void updateScreen();

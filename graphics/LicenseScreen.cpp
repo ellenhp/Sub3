@@ -11,6 +11,11 @@ LicenseScreen::LicenseScreen(SubWindow* subWindow) :
 {
 }
 
+LicenseScreen::~LicenseScreen()
+{
+    mLicenseWindow = NULL;
+}
+
 void LicenseScreen::setupScreen(sfg::Desktop& desktop)
 {
     //sfg::Box is for layout purposes.
@@ -42,6 +47,7 @@ void LicenseScreen::setupScreen(sfg::Desktop& desktop)
 
     //Add it to the desktop.
     desktop.Add(mLicenseWindow);
+    centerWindow();
 }
 
 void LicenseScreen::updateScreen()
@@ -50,20 +56,23 @@ void LicenseScreen::updateScreen()
     static int lastHeight = 0;
     if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
     {
-        //Center the window.
-        float width = mLicenseWindow->GetAllocation().width;
-        float height = mLicenseWindow->GetAllocation().height;
-        float winX = (mSubWindow->getWidth() - width) / 2;
-        float winY = (mSubWindow->getHeight() - height) / 2;
-        mLicenseWindow->SetAllocation({winX, winY, width, height});
-
+        centerWindow();
         lastWidth = mSubWindow->getWidth();
         lastHeight = mSubWindow->getHeight();
     }
 }
 
+void LicenseScreen::centerWindow()
+{
+    //Center the window.
+    float width = mLicenseWindow->GetAllocation().width;
+    float height = mLicenseWindow->GetAllocation().height;
+    float winX = (mSubWindow->getWidth() - width) / 2;
+    float winY = (mSubWindow->getHeight() - height) / 2;
+    mLicenseWindow->SetAllocation({winX, winY, width, height});
+}
+
 void LicenseScreen::backHandler()
 {
-    mLicenseWindow = NULL;
     mSubWindow->switchToScreen<MainMenu>();
 }

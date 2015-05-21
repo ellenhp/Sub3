@@ -11,6 +11,12 @@ MainMenu::MainMenu(SubWindow* subWindow) :
 {
 }
 
+MainMenu::~MainMenu()
+{
+    mConnectWindow = NULL;
+    mMainWindow = NULL;
+}
+
 void MainMenu::setupScreen(sfg::Desktop& desktop)
 {
     //sfg::Box is for layout purposes.
@@ -46,6 +52,7 @@ void MainMenu::setupScreen(sfg::Desktop& desktop)
 
     //Add it to the desktop.
     desktop.Add(mMainWindow);
+    centerWindow();
 
     mDesktop = &desktop;
 }
@@ -56,13 +63,7 @@ void MainMenu::updateScreen()
     static int lastHeight = 0;
     if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
     {
-        //Center the window.
-        float width = mMainWindow->GetAllocation().width;
-        float height = mMainWindow->GetAllocation().height;
-        float winX = (mSubWindow->getWidth() - width) / 2;
-        float winY = (mSubWindow->getHeight() - height) / 2;
-        mMainWindow->SetAllocation({winX, winY, width, height});
-
+        centerWindow();
         lastWidth = mSubWindow->getWidth();
         lastHeight = mSubWindow->getHeight();
     }
@@ -117,8 +118,6 @@ void MainMenu::playHandler()
 
 void MainMenu::licenseHandler()
 {
-    mMainWindow = NULL;
-    mConnectWindow = NULL;
     mSubWindow->switchToScreen<LicenseScreen>();
 }
 
@@ -130,8 +129,6 @@ void MainMenu::quitHandler()
 void MainMenu::playConnectHandler()
 {
     mDesktop->Remove(mConnectWindow);
-    mConnectWindow = NULL;
-    mMainWindow = NULL;
     mSubWindow->switchToScreen<LoadingScreen>();
 }
 
@@ -139,4 +136,14 @@ void MainMenu::playCancelHandler()
 {
     mDesktop->Remove(mConnectWindow);
     mConnectWindow = NULL;
+}
+
+void MainMenu::centerWindow()
+{
+    //Center the window.
+    float width = mMainWindow->GetAllocation().width;
+    float height = mMainWindow->GetAllocation().height;
+    float winX = (mSubWindow->getWidth() - width) / 2;
+    float winY = (mSubWindow->getHeight() - height) / 2;
+    mMainWindow->SetAllocation({winX, winY, width, height});
 }

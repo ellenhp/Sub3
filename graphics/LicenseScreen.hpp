@@ -11,6 +11,8 @@ class LicenseScreen : public SubScreen
 {
 public:
     LicenseScreen(SubWindow* subWindow);
+    virtual ~LicenseScreen();
+
     void setupScreen(sfg::Desktop& desktop);
 
     void updateScreen();
@@ -21,4 +23,6 @@ private:
     sfg::Window::Ptr mLicenseWindow;
 
     void backHandler();
+
+    void centerWindow();
 };

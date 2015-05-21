@@ -3,8 +3,13 @@
 #include "SubWindow.hpp"
 
 LoadingScreen::LoadingScreen(SubWindow* subWindow) :
-    mSubWindow(subWindow)
+    mSubWindow(subWindow), mLoadingWindow(NULL)
 {
+}
+
+LoadingScreen::~LoadingScreen()
+{
+    mLoadingWindow = NULL;
 }
 
 void LoadingScreen::setupScreen(sfg::Desktop& desktop)

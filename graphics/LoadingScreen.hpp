@@ -11,6 +11,8 @@ class LoadingScreen : public SubScreen
 {
 public:
     LoadingScreen(SubWindow* subWindow);
+    virtual ~LoadingScreen();
+
     void setupScreen(sfg::Desktop& desktop);
 
     void updateScreen();

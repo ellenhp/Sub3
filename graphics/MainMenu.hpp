@@ -11,6 +11,8 @@ class MainMenu : public SubScreen
 {
 public:
     MainMenu(SubWindow* subWindow);
+    virtual ~MainMenu();
+
     void setupScreen(sfg::Desktop& desktop);
 
     void updateScreen();
@@ -25,6 +27,8 @@ private:
     sfg::Entry::Ptr mPortEntry;
 
     sfg::Desktop* mDesktop;
+
+    void centerWindow();
 
     void playHandler();
     void licenseHandler();
