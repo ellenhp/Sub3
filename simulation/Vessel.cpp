@@ -9,7 +9,7 @@ void Vessel::setState(VesselState state)
     mState = state;
 }
 
-VesselState Vessel::getState()
+VesselState Vessel::getState() const
 {
     return mState;
 }

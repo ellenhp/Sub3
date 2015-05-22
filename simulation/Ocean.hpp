@@ -52,6 +52,9 @@ public:
     bool getHasVessel(VesselID id);
     VesselState getState(VesselID id);
 
+    //Get all vessels within d meters.
+    std::vector<std::shared_ptr<const Vessel>> getNearestVessels(double d, std::shared_ptr<const Vessel> target = NULL);
+
     //This lets GameManager give out references to vessels at its discretion.
     friend class GameManager;
 
@@ -61,6 +64,6 @@ private:
 
     Month mMonth;
 
-    std::map<VesselID, std::shared_ptr<Vessel> > mVessels;
+    std::map<VesselID, std::shared_ptr<Vessel>> mVessels;
 
 };

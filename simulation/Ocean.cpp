@@ -1,6 +1,7 @@
 #include "Ocean.hpp"
 
 #include "simulation/Vessel.hpp"
+#include "simulation/GameManager.hpp"
 
 #include <boost/assert.hpp>
 
@@ -84,4 +85,31 @@ VesselState Ocean::getState(VesselID id)
 {
     BOOST_ASSERT_MSG(getHasVessel(id), "Fatal: Ocean doesn't contain vessel to get state of");
     return mVessels.at(id)->getState();
+}
+
+std::vector<std::shared_ptr<const Vessel>> Ocean::getNearestVessels(double d, std::shared_ptr<const Vessel> target)
+{
+    //NULL means we should use our player's vessel.
+    if (target == NULL)
+    {
+        auto gameManager = GameManager::getCurrent().lock();
+        //Make sure everything is initialized.
+        BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager.getCurrent() NULL in Ocean.getNearestVessels(d)");
+        BOOST_ASSERT_MSG(gameManager->isInitialized(), "Fatal: GameManager not initialized in Ocean.getNearestVessels(d)");
+        target = gameManager->getCurrentVessel();
+    }
+
+    std::vector<std::shared_ptr<const Vessel>> nearestVessels;
+
+    auto targetPos = target->getState().getLocation();
+    for (auto& vesselKV : mVessels)
+    {
+        auto otherLocation = vesselKV.second->getState().getLocation();
+        if (targetPos.distanceTo(otherLocation) < d)
+        {
+            nearestVessels.push_back(vesselKV.second);
+        }
+    }
+
+    return nearestVessels;
 }

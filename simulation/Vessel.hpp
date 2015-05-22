@@ -18,7 +18,7 @@ public:
     //TODO: return a vector of Messages instead of a VesselState.
     virtual VesselState getNewState(float dt) = 0;
     void setState(VesselState state);
-    VesselState getState();
+    VesselState getState() const;
 
     //More complex Vessels might require custom initialization that will be generated here.
     virtual std::vector<std::shared_ptr<Message> > getSpawnMessages(VesselID vesselID) = 0;

@@ -3,6 +3,7 @@ set(SOURCE
    ${CMAKE_CURRENT_SOURCE_DIR}/GameManager.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/Ocean.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/PlayerID.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/Position.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/Vessel.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/VesselID.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/VesselState.cpp

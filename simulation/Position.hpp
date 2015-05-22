@@ -34,13 +34,12 @@ class Position : public usml::types::wposition1
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 public:
-    Position(double rho, double theta, double phi)
-    {
-        wposition1(rho, theta, phi);
-    }
+    Position(double rho, double theta, double phi);
+    Position(const Position& other);
 
-    Position(const Position& other)
-    {
-        wposition1(other.rho(), other.theta(), other.phi());
-    }
+    //Distance to another Position object in meters.
+    double distanceTo(Position other);
+
+    //Bearing to another Position object in radians
+    double bearingTo(Position other);
 };
