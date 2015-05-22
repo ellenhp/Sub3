@@ -1,6 +1,7 @@
 #include "LoadingScreen.hpp"
 
 #include "SubWindow.hpp"
+#include "GameScreen.hpp"
 #include "../simulation/GameManager.hpp"
 
 #include <SFML/Network/IpAddress.hpp>
@@ -27,6 +28,7 @@ LoadingScreen::LoadingScreen(SubWindow* subWindow) :
 
 LoadingScreen::~LoadingScreen()
 {
+    mLoadingThread = NULL;
     mLoadingWindow = NULL;
 }
 
@@ -84,7 +86,11 @@ void LoadingScreen::updateScreen()
 
     if (launchGame)
     {
-        //mSubWindow->quit();
+        BOOST_ASSERT_MSG(mLoadingThread, "Fatal: LoadingScreen tried to join thread but it's null");
+        mLoadingThread->join();
+        subDebug << "Starting game screen" << std::endl;
+        mSubWindow->switchToScreen<GameScreen>();
+        return;
     }
 
     centerWindow();
@@ -231,4 +237,6 @@ void LoadingScreen::doLoading()
     mLoadingMutex.lock();
     mLaunchGame = true;
     mLoadingMutex.unlock();
+
+    subDebug << "Loading thread done" << std::endl;
 }

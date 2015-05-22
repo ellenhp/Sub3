@@ -54,6 +54,9 @@ public:
     bool getHasVessel(VesselID id);
     VesselState getState(VesselID id);
 
+    //This lets GameManager give out references to vessels at its discretion.
+    friend class GameManager;
+
 private:
     Ocean();
     static Ocean* oceanInst;

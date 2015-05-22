@@ -22,11 +22,16 @@ PlayerID GameManager::getPlayerID()
     return mPlayer;
 }
 
-VesselID GameManager::getCurrentVessel()
+VesselID GameManager::getCurrentVesselID()
 {
     return mCurrentVessel;
 }
 
+std::shared_ptr<Vessel> GameManager::getCurrentVessel()
+{
+    BOOST_ASSERT_MSG(isInitialized(), "Fatal: GameManager not initialized in GameManager.getCurrentVessel()");
+    return Ocean::getOcean()->mVessels.at(mCurrentVessel);
+}
 
 void GameManager::setPlayer(PlayerID player)
 {

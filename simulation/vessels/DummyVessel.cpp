@@ -19,3 +19,21 @@ std::vector<std::shared_ptr<Message> > DummyVessel::getSpawnMessages(VesselID ve
     messages.push_back(std::make_shared<SpawnMessage<DummyVessel> >(vesselID, mState));
     return messages;
 }
+
+std::shared_ptr<Vessel::VesselUI> DummyVessel::constructUI()
+{
+    return std::make_shared<DummyVessel::DummyUI>();
+}
+
+DummyVessel::DummyUI::~DummyUI()
+{
+}
+
+std::shared_ptr<sfg::Widget> DummyVessel::DummyUI::setupUI()
+{
+    return sfg::Label::Create("Hello");
+}
+
+void DummyVessel::DummyUI::updateUI(double dt)
+{
+}
