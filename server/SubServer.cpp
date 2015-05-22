@@ -67,23 +67,24 @@ void SubServer::serverLoop()
         auto newSocket = std::make_shared<sf::TcpSocket>();
         while (mListener.accept(*newSocket) == sf::Socket::Status::Done)
         {
+            subDebug<<"accepting a new player"<<std::endl;
             //Make a new sub socket
             auto newSubSocket = std::make_shared<SubSocket>(newSocket);
             auto setPlayerID = std::make_shared<SetPlayerIDMessage>(mNextPlayerID);
             PlayerID newPlayerID(mNextPlayerID);
             mNextPlayerID++;
 
+            //Add it to clients.
+            mClients[newPlayerID] = newSubSocket;
+
             //Tell it who it is.
-            *newSubSocket << setPlayerID;
+            sendMessageToPlayer(newPlayerID, setPlayerID);
 
             //Bring it up to speed.
             for (std::shared_ptr<Message> message : Ocean::getOcean()->getInitiationMessages())
             {
-                *newSubSocket << message;
+                sendMessageToPlayer(newPlayerID, message);
             }
-
-            //Add it to clients.
-            mClients[newPlayerID] = newSubSocket;
 
             spawnVesselForPlayer(newPlayerID);
 
@@ -97,6 +98,21 @@ void SubServer::serverLoop()
             //TODO update all the clients.
         }
 
+        for (auto it = mSendMessageSuccessful.begin(); it != mSendMessageSuccessful.end(); it++)
+        {
+            //Kick all clients with network troubles (sorry)
+            if (it->second.wait_for(std::chrono::microseconds(1)) == std::future_status::ready)
+            {
+                bool messageSent = it->second.get();
+                if (!messageSent)
+                {
+                    kickPlayer(it->first);
+                }
+                mSendMessageSuccessful.erase(it);
+                continue;
+            }
+        }
+
         //Sleep for a bit.
         std::this_thread::sleep_until(end_time);
 
@@ -108,16 +124,41 @@ void SubServer::serverLoop()
 void SubServer::spawnVesselForPlayer(PlayerID player)
 {
     std::vector<std::shared_ptr<Message>> messages;
+
+    //Guaranteed to be the first vessel spawned by this player
+    uint32_t vesselNum = 0;
+
+    VesselID newVesselID(player, vesselNum);
+
     //Create a message for spawning the new vessel.
-    VesselID newVesselID(player, 0); //Guaranteed to be the first vessel spawned by this player
     auto spawnMessage = std::make_shared<SpawnMessage<DummyVessel>>(newVesselID, VesselState());
 
     //Let everybody know that we're spawning something.
     for (auto& clientKV : mClients)
     {
-        *clientKV.second << spawnMessage;
+        sendMessageToPlayer(clientKV.first, spawnMessage);
     }
 
     //Tell the client which vessel it can control.
-    *mClients[player] << std::make_shared<SetCurrentVesselMessage>(newVesselID);
+    sendMessageToPlayer(player, std::make_shared<SetCurrentVesselMessage>(newVesselID));
+}
+
+void SubServer::sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message)
+{
+    BOOST_ASSERT_MSG(mClients.count(player) > 0, "Fatal: Player doesn't exist or disconnected.");
+    auto messageResult = (*mClients.at(player) << message).share();
+    mSendMessageSuccessful.insert(std::make_pair(player, messageResult));
+}
+
+void SubServer::kickPlayer(PlayerID player)
+{
+    BOOST_ASSERT_MSG(mClients.count(player) > 0, "Fatal: Player doesn't exist or disconnected.");
+    //TODO: maybe send a disconnect message.
+    mClients.erase(player);
+
+    //This causes a segfault or sometimes a double-free
+    //TODO: why?
+    //mSendMessageSuccessful.erase(player);
+
+    subDebug << "Kicked player: " << player << " for network problems." << std::endl;
 }

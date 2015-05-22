@@ -1,9 +1,11 @@
 #pragma once
 
+#include <future>
 #include <memory>
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include <map>
 
 #include <SFML/Network/TcpListener.hpp>
 
@@ -47,9 +49,12 @@ private:
     uint32_t mNextPlayerID;
 
     std::map<PlayerID, std::shared_ptr<SubSocket>> mClients;
+    std::multimap<PlayerID, std::shared_future<bool>> mSendMessageSuccessful;
 
     void serverLoop();
 
     void spawnVesselForPlayer(PlayerID player);
 
+    void sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message);
+    void kickPlayer(PlayerID player);
 };

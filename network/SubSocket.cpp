@@ -36,7 +36,23 @@ void SubSocket::queuePackets()
     }
 }
 
-SubSocket& operator<<(SubSocket& socket, std::shared_ptr<Message> message)
+std::future<bool> operator<<(SubSocket& socket, std::shared_ptr<Message> message)
+{
+    return std::async(std::launch::async, &SubSocket::sendPacketAsync, &socket, message);
+}
+
+bool operator>>(SubSocket& socket, std::shared_ptr<Message>& message)
+{
+    if (socket.mQueue.size() > 0)
+    {
+        message = socket.mQueue.front();
+        socket.mQueue.pop_front();
+        return true;
+    }
+    return false; //Give the user some indication that their shared_ptr isn't what they want
+}
+
+bool SubSocket::sendPacketAsync(std::shared_ptr<Message> message)
 {
     std::stringstream stream;
     boost::archive::text_oarchive outArchive(stream);
@@ -50,18 +66,5 @@ SubSocket& operator<<(SubSocket& socket, std::shared_ptr<Message> message)
     sf::Packet packet;
     packet.append(stream.str().c_str(), stream.str().size());
 
-    subDebug << "Sending packet: " << socket.mSocket->send(packet) << std::endl;
-
-    return socket;
-}
-
-bool operator>>(SubSocket& socket, std::shared_ptr<Message>& message)
-{
-    if (socket.mQueue.size() > 0)
-    {
-        message = socket.mQueue.front();
-        socket.mQueue.pop_front();
-        return true;
-    }
-    return false; //Give the user some indication that their shared_ptr isn't what they want
+    return mSocket->send(packet) == sf::TcpSocket::Status::Done;
 }
