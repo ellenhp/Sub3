@@ -3,9 +3,10 @@
 #include "Sub3.hpp"
 #include "network/Message.hpp"
 
+//Sets the player ID on the client. This is an important initialization step.
 class SetPlayerIDMessage : public Message
 {
-    //Serialization boilerplate
+    //Serialization boilerplate.
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)

@@ -100,7 +100,7 @@ void SubServer::serverLoop()
 
         for (auto it = mSendMessageSuccessful.begin(); it != mSendMessageSuccessful.end(); it++)
         {
-            //Kick all clients with network troubles (sorry)
+            //Kick all clients with network troubles. (sorry)
             if (it->second.wait_for(std::chrono::microseconds(1)) == std::future_status::ready)
             {
                 bool messageSent = it->second.get();
@@ -156,7 +156,7 @@ void SubServer::kickPlayer(PlayerID player)
     //TODO: maybe send a disconnect message.
     mClients.erase(player);
 
-    //This causes a segfault or sometimes a double-free
+    //This causes a segfault or sometimes a double-free.
     //TODO: why?
     //mSendMessageSuccessful.erase(player);
 

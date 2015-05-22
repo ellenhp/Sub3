@@ -7,10 +7,10 @@
 #include "simulation/VesselState.hpp"
 #include "simulation/Ocean.hpp"
 
-//Template to allow any vessel to have a spawn message
+//Template to allow any vessel to have a spawn message.
 template <class VesselClass> class SpawnMessage : public Message
 {
-    //Serialization boilerplate
+    //Serialization boilerplate.
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)

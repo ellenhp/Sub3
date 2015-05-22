@@ -3,6 +3,7 @@
 #include "network/Message.hpp"
 #include "simulation/VesselID.hpp"
 
+//Despawns a vessel.
 class DespawnMessage : public Message
 {
     //Serialization boilerplate

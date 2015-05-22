@@ -49,7 +49,7 @@ bool operator>>(SubSocket& socket, std::shared_ptr<Message>& message)
         socket.mQueue.pop_front();
         return true;
     }
-    return false; //Give the user some indication that their shared_ptr isn't what they want
+    return false; //Give the user some indication that their shared_ptr isn't what they want.
 }
 
 bool SubSocket::sendPacketAsync(std::shared_ptr<Message> message)
@@ -60,7 +60,7 @@ bool SubSocket::sendPacketAsync(std::shared_ptr<Message> message)
     //We want the raw pointer for this.
     Message* messageRaw = message.get();
 
-    //Boost serializes the object we're pointing at, preserving polymorphic behavior,
+    //Boost serializes the object we're pointing at, preserving polymorphic behavior.
     outArchive << messageRaw;
 
     sf::Packet packet;

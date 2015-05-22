@@ -14,7 +14,7 @@ class Ocean;
 
 class Message
 {
-    //Serialization boilerplate
+    //Serialization boilerplate.
     friend class Ocean;
     friend class boost::serialization::access;
     template<class Archive>
