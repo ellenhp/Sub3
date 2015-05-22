@@ -6,9 +6,9 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "../simulation/VesselState.hpp"
+#include "simulation/VesselState.hpp"
 
-#include "../simulation/VesselID.hpp"
+#include "simulation/VesselID.hpp"
 
 class Ocean;
 

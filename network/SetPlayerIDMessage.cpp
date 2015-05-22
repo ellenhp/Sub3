@@ -1,5 +1,5 @@
 #include "SetPlayerIDMessage.hpp"
-#include "../simulation/GameManager.hpp"
+#include "simulation/GameManager.hpp"
 
 #include <boost/assert.hpp>
 

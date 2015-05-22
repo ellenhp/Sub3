@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Sub3.hpp"
-#include "PlayerID.hpp"
+#include "Sub3.hpp"
+#include "simulation/PlayerID.hpp"
 
 #include <ostream>
 

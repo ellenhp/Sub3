@@ -1,5 +1,5 @@
 #include "DespawnMessage.hpp"
-#include "../simulation/Ocean.hpp"
+#include "simulation/Ocean.hpp"
 
 DespawnMessage::DespawnMessage()
 {

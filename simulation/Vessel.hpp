@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VesselState.hpp"
-#include "../network/SpawnMessage.hpp"
+#include "simulation/VesselState.hpp"
+#include "network/SpawnMessage.hpp"
 
 #include <SFGUI/Widgets.hpp>
 

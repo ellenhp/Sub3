@@ -1,10 +1,10 @@
 #include "SubServer.hpp"
 
-#include "../network/SetPlayerIDMessage.hpp"
-#include "../network/SetCurrentVesselMessage.hpp"
-#include "../simulation/Ocean.hpp"
-#include "../simulation/vessels/DummyVessel.hpp"
-#include "../Sub3.hpp"
+#include "Sub3.hpp"
+#include "network/SetPlayerIDMessage.hpp"
+#include "network/SetCurrentVesselMessage.hpp"
+#include "simulation/Ocean.hpp"
+#include "simulation/vessels/DummyVessel.hpp"
 
 #include <SFML/Network/TcpSocket.hpp>
 

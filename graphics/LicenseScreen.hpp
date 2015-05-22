@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SubScreen.hpp"
+#include "graphics/SubScreen.hpp"
 
 #include <SFGUI/Widgets.hpp>
 

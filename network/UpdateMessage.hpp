@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Message.hpp"
-#include "../simulation/VesselState.hpp"
+#include "network/Message.hpp"
+#include "simulation/VesselState.hpp"
 
 class UpdateMessage : public Message
 {

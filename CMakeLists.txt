@@ -88,6 +88,9 @@ if(NETCDF_FOUND)
     target_link_libraries(${SERVER_NAME} ${NETCDF_LIBRARIES})
 endif()
 
+# Allow includes without "../" all over the place
+include_directories(${PROJECT_SOURCE_DIR})
+
 # Install target
 install(TARGETS ${GAME_NAME} DESTINATION bin)
 install(TARGETS ${SERVER_NAME} DESTINATION bin)

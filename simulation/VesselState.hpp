@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Position.hpp"
+#include "simulation/Position.hpp"
 
 //This keeps track of the most basic states a vessel can have.
 class VesselState

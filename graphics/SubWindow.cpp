@@ -4,8 +4,8 @@
 
 #include <SFML/Window/Event.hpp>
 
-#include "MainMenu.hpp"
-#include "../Sub3.hpp"
+#include "graphics/MainMenu.hpp"
+#include "Sub3.hpp"
 
 SubWindow::SubWindow(sf::VideoMode videoMode) :
     mRenderWindow(videoMode, "Sub^3"), mCurrentScreen(NULL)

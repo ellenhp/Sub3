@@ -1,7 +1,7 @@
 #include "LicenseScreen.hpp"
 
-#include "SubWindow.hpp"
-#include "MainMenu.hpp"
+#include "graphics/SubWindow.hpp"
+#include "graphics/MainMenu.hpp"
 
 #include <fstream>
 #include <sstream>

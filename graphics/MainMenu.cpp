@@ -1,8 +1,8 @@
 #include "MainMenu.hpp"
 
-#include "SubWindow.hpp"
-#include "LicenseScreen.hpp"
-#include "LoadingScreen.hpp"
+#include "graphics/SubWindow.hpp"
+#include "graphics/LicenseScreen.hpp"
+#include "graphics/LoadingScreen.hpp"
 
 //Keep around the SubWindow pointer for event handling purposes.
 MainMenu::MainMenu(SubWindow* subWindow) :

@@ -1,8 +1,8 @@
 #include "LoadingScreen.hpp"
 
-#include "SubWindow.hpp"
-#include "GameScreen.hpp"
-#include "../simulation/GameManager.hpp"
+#include "graphics/SubWindow.hpp"
+#include "graphics/GameScreen.hpp"
+#include "simulation/GameManager.hpp"
 
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>

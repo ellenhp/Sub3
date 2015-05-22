@@ -1,6 +1,8 @@
 #pragma once
 
-#include "SubScreen.hpp"
+#include "graphics/SubScreen.hpp"
+#include "network/SubSocket.hpp"
+#include "Sub3.hpp"
 
 #include <SFGUI/Widgets.hpp>
 
@@ -8,9 +10,6 @@
 #include <mutex>
 
 #include <usml/ocean/ocean_shared.h>
-
-#include "../network/SubSocket.hpp"
-#include "../Sub3.hpp"
 
 class SubWindow;
 

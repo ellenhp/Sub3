@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Sub3.hpp"
+#include "Sub3.hpp"
+
 #include <boost/serialization/export.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>

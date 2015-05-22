@@ -4,12 +4,10 @@
 #include <memory>
 #include <string>
 
-#include "../Sub3.hpp"
-
-#include "../network/Message.hpp"
-
-#include "VesselID.hpp"
-#include "PlayerID.hpp"
+#include "Sub3.hpp"
+#include "network/Message.hpp"
+#include "simulation/VesselID.hpp"
+#include "simulation/PlayerID.hpp"
 
 class Vessel;
 template<class VesselClass> class SpawnMessage;

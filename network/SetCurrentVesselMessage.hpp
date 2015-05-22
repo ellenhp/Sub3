@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Message.hpp"
-#include "../simulation/VesselID.hpp"
+#include "network/Message.hpp"
+#include "simulation/VesselID.hpp"
 
 class SetCurrentVesselMessage : public Message
 {

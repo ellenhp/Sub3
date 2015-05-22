@@ -5,7 +5,7 @@
 
 #include <SFML/Network/TcpSocket.hpp>
 
-#include "Message.hpp"
+#include "network/Message.hpp"
 
 class SubSocket
 {

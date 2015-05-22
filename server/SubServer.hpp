@@ -7,8 +7,8 @@
 
 #include <SFML/Network/TcpListener.hpp>
 
-#include "../simulation/PlayerID.hpp"
-#include "../network/SubSocket.hpp"
+#include "simulation/PlayerID.hpp"
+#include "network/SubSocket.hpp"
 
 typedef std::chrono::duration<int, std::ratio<1, 10>> network_interval;
 

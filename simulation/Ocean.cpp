@@ -1,5 +1,6 @@
 #include "Ocean.hpp"
-#include "Vessel.hpp"
+
+#include "simulation/Vessel.hpp"
 
 #include <boost/assert.hpp>
 

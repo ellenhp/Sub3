@@ -2,10 +2,10 @@
 
 #include <boost/serialization/export.hpp>
 
-#include "Message.hpp"
-#include "../Sub3.hpp"
-#include "../simulation/VesselState.hpp"
-#include "../simulation/Ocean.hpp"
+#include "Sub3.hpp"
+#include "network/Message.hpp"
+#include "simulation/VesselState.hpp"
+#include "simulation/Ocean.hpp"
 
 //Template to allow any vessel to have a spawn message
 template <class VesselClass> class SpawnMessage : public Message

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Vessel.hpp"
+#include "simulation/Vessel.hpp"
 
 //This vessel doesn't do anything. For testing only.
 class DummyVessel : public Vessel

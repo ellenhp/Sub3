@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "PlayerID.hpp"
-#include "VesselID.hpp"
-#include "Vessel.hpp"
+#include "simulation/PlayerID.hpp"
+#include "simulation/VesselID.hpp"
+#include "simulation/Vessel.hpp"
 
 //GameManager controls some basic game stuff like who player is and what vessel they own.
 class GameManager

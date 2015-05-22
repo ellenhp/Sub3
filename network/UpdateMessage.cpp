@@ -1,5 +1,5 @@
 #include "UpdateMessage.hpp"
-#include "../simulation/Ocean.hpp"
+#include "simulation/Ocean.hpp"
 
 //This is necessary for serialization to work correctly
 BOOST_CLASS_EXPORT_GUID(UpdateMessage, "UpdateMessage")

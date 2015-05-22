@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "SubScreen.hpp"
+#include "graphics/SubScreen.hpp"
 
 //This class controls the window that the user will see and interact with.
 class SubWindow

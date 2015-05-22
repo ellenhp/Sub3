@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Sub3.hpp"
-#include "Message.hpp"
+#include "Sub3.hpp"
+#include "network/Message.hpp"
 
 class SetPlayerIDMessage : public Message
 {
