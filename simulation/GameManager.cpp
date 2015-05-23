@@ -8,7 +8,7 @@
 std::shared_ptr<GameManager> GameManager::gameInst = NULL;
 
 GameManager::GameManager() :
-    mHasSetVessel(false), mHasSetPlayer(false), mSocket(NULL)
+    mSocket(NULL), mHasSetPlayer(false), mHasSetVessel(false)
 {
     mLastUpdate = std::chrono::steady_clock::now();
 }
@@ -65,8 +65,6 @@ void GameManager::setSocket(std::shared_ptr<SubSocket> socket)
 void GameManager::tick(float dt)
 {
     auto localUpdateMessages = Ocean::getOcean()->tick(dt);
-
-    auto lastUpdate = std::chrono::steady_clock::now();
 
     for (auto updateMessage : localUpdateMessages)
     {

@@ -14,7 +14,6 @@ VesselState BasicSurfaceVessel::getNewState(float dt)
     //TODO: This doesn't take into account pitch. It'll work for a surface vessel though.
     double range = dt * mState.getVelocity();
     double bearing = mState.getHeading();
-    Position pos = mState.getLocation();
     Position newPos(mState.getLocation(), range, bearing);
     return VesselState(newPos, mState.getVelocity(), mState.getHeading(), mState.getPitch());
 }

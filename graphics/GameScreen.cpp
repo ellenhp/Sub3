@@ -9,7 +9,7 @@
 #include <sstream>
 
 GameScreen::GameScreen(SubWindow* subWindow) :
-    mSubWindow(subWindow), mGameWindow(NULL), mVesselUI(NULL), mVesselWidget(NULL)
+    mSubWindow(subWindow), mGameWindow(NULL), mVesselWidget(NULL), mVesselUI(NULL)
 {
 }
 

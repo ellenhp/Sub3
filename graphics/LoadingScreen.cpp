@@ -23,7 +23,7 @@ using usml::netcdf::netcdf_bathy;
 using namespace usml::ocean;
 
 LoadingScreen::LoadingScreen(SubWindow* subWindow) :
-    mSubWindow(subWindow), mLoadingWindow(NULL), mLoadingDone(false), mLaunchGame(false)
+    mSubWindow(subWindow), mLoadingDone(false), mLaunchGame(false), mLoadingWindow(NULL)
 {
 }
 
