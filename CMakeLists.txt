@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8)
 project(Sub3)
 
 # Set default build configuration
@@ -44,9 +44,12 @@ set(SERVER_NAME "sub3_server")
 add_executable(${SERVER_NAME} ${PROJECT_SOURCE_DIR}/server.cpp $<TARGET_OBJECTS:Sub3SharedObjects>)
 
 # Enable C++11
-target_compile_features(Sub3SharedObjects PRIVATE cxx_range_for)
-target_compile_features(${GAME_NAME} PRIVATE cxx_range_for)
-target_compile_features(${SERVER_NAME} PRIVATE cxx_range_for)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Find threads
+find_package (Threads)
+target_link_libraries(${GAME_NAME} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${SERVER_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 # Find Boost
 find_package(Boost COMPONENTS serialization system)
@@ -57,7 +60,7 @@ if(Boost_FOUND)
 endif()
 
 # Find SFML
-find_package(SFML 2 REQUIRED system window graphics network audio)
+find_package(SFML 2.3 REQUIRED system window graphics network audio)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${GAME_NAME} ${SFML_LIBRARIES})
