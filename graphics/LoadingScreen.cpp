@@ -2,6 +2,7 @@
 
 #include "graphics/SubWindow.hpp"
 #include "graphics/GameScreen.hpp"
+#include "network/SubSocket.hpp"
 #include "simulation/GameManager.hpp"
 
 #include <SFML/Network/IpAddress.hpp>

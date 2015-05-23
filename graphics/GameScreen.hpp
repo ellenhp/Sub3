@@ -1,10 +1,11 @@
 #pragma once
 
 #include "graphics/SubScreen.hpp"
-#include "graphics/SubWindow.hpp"
 #include "simulation/Vessel.hpp"
 
 #include <SFGUI/Widgets.hpp>
+
+class SubWindow;
 
 class GameScreen : public SubScreen
 {

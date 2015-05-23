@@ -1,7 +1,6 @@
 #pragma once
 
 #include "graphics/SubScreen.hpp"
-#include "network/SubSocket.hpp"
 #include "Sub3.hpp"
 
 #include <SFGUI/Widgets.hpp>
@@ -12,6 +11,7 @@
 #include <usml/ocean/ocean_shared.h>
 
 class SubWindow;
+class SubSocket;
 
 //This class opens a connection and initializes USML
 class LoadingScreen : public SubScreen

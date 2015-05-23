@@ -2,6 +2,7 @@
 
 #include "network/Message.hpp"
 #include "simulation/VesselState.hpp"
+#include "simulation/VesselID.hpp"
 
 class UpdateMessage : public Message
 {

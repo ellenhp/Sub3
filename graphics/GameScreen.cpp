@@ -1,7 +1,8 @@
 #include "GameScreen.hpp"
 
-#include "simulation/GameManager.hpp"
 #include "Sub3.hpp"
+#include "graphics/SubWindow.hpp"
+#include "simulation/GameManager.hpp"
 
 #include <SFGUI/Widgets.hpp>
 

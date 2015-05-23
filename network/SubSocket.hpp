@@ -1,12 +1,15 @@
 #pragma once
 
 #include <memory>
-#include <deque>
 #include <future>
-
-#include <SFML/Network/TcpSocket.hpp>
+#include <deque>
 
 #include "network/Message.hpp"
+
+namespace sf
+{
+    class TcpSocket;
+}
 
 class SubSocket
 {

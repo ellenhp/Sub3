@@ -1,6 +1,9 @@
 #include "SubSocket.hpp"
 
+#include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/Packet.hpp>
+
+#include <sstream>
 
 SubSocket::SubSocket(std::shared_ptr<sf::TcpSocket> socket) :
     mSocket(socket)

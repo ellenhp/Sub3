@@ -10,6 +10,7 @@
 #include "simulation/PlayerID.hpp"
 
 class Vessel;
+class VesselState;
 template<class VesselClass> class SpawnMessage;
 
 class Ocean

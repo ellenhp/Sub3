@@ -2,6 +2,8 @@
 
 #include "server/SubServer.hpp"
 #include "network/UpdateMessage.hpp"
+#include "network/SubSocket.hpp"
+#include "simulation/Vessel.hpp"
 
 std::shared_ptr<GameManager> GameManager::gameInst = NULL;
 

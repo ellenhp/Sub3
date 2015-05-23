@@ -1,5 +1,7 @@
 #include "SubDebug.hpp"
 
+#include <iostream>
+
 //This lets all subDebug messages do nothing if we use it for our ostream.
 class NullBuffer : public std::streambuf
 {

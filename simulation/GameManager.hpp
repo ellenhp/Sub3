@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <chrono>
 
 #include "simulation/PlayerID.hpp"
 #include "simulation/VesselID.hpp"
-#include "simulation/Vessel.hpp"
-#include "network/SubSocket.hpp"
+
+class Vessel;
+class SubSocket;
 
 //GameManager controls some basic game stuff like who player is and what vessel they own.
 class GameManager
