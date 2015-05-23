@@ -68,7 +68,7 @@ if(SFML_FOUND)
 endif()
 
 # Find SFGUI
-find_package(SFGUI)
+find_package(SFGUI REQUIRED)
 if(SFGUI_FOUND)
     include_directories(${SFGUI_INCLUDE_DIR})
     target_link_libraries(${GAME_NAME} ${SFGUI_LIBRARY})
@@ -78,6 +78,16 @@ endif()
 # Find USML
 find_package(USML REQUIRED)
 if(USML_FOUND)
+    message("Copying oceanographic data. This could take a while.")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/temperature_seasonal_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/temperature_monthly_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/salinity_seasonal_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/salinity_monthly_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/bathymetry/ETOPO1_Ice_g_gmt4.grd" DESTINATION "${PROJECT_BINARY_DIR}/usml/bathymetry/")
+
     include_directories(${USML_INCLUDE_DIRS})
     target_link_libraries(${GAME_NAME} ${USML_LIBRARIES})
     target_link_libraries(${SERVER_NAME} ${USML_LIBRARIES})
