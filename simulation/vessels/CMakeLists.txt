@@ -1,10 +1,12 @@
 set(SOURCE
    ${SOURCE}
    ${CMAKE_CURRENT_SOURCE_DIR}/DummyVessel.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/BasicSurfaceVessel.cpp
    PARENT_SCOPE
 )
 set(HEADERS
    ${HEADERS}
    ${CMAKE_CURRENT_SOURCE_DIR}/DummyVessel.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/BasicSurfaceVessel.hpp
    PARENT_SCOPE
 )

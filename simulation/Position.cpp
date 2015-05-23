@@ -1,13 +1,53 @@
 #include "Position.hpp"
 
-Position::Position(double rho, double theta, double phi)
+#include "Sub3.hpp"
+
+Position::Position(double rho, double theta, double phi) :
+    wposition1(rho, theta, phi)
 {
-    wposition1(rho, theta, phi);
 }
 
-Position::Position(const Position& other)
+Position::Position()
 {
-    wposition1(other.rho(), other.theta(), other.phi());
+    latitude(0);
+    longitude(0);
+    altitude(0);
+}
+
+Position::Position(const Position& other, double range, double bearing) :
+    wposition1(other, range, bearing)
+{
+}
+
+double Position::getLatitude() const
+{
+    return 90.0 - (theta() * 180.0 / M_PI);
+}
+
+double Position::getLongitude() const
+{
+    return (phi() * 180.0 / M_PI);
+}
+
+double Position::getAltitude() const
+{
+    return altitude();
+}
+
+void Position::setLatitude(double lat)
+{
+    subDebug << "set lat to " << lat << std::endl;
+    latitude(lat);
+}
+
+void Position::setLongitude(double lng)
+{
+    longitude(lng);
+}
+
+void Position::setAltitude(double alt)
+{
+    altitude(alt);
 }
 
 double Position::distanceTo(Position other)

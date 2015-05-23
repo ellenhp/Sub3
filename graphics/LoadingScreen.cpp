@@ -68,7 +68,7 @@ void LoadingScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> 
     centerWindow();
 }
 
-void LoadingScreen::updateScreen()
+void LoadingScreen::updateScreen(float dt)
 {
     mLoadingMutex.lock();
     mLabel->SetText(mLoadingText);
@@ -89,6 +89,11 @@ void LoadingScreen::updateScreen()
         BOOST_ASSERT_MSG(mLoadingThread, "Fatal: LoadingScreen tried to join thread but it's null");
         mLoadingThread->join();
         subDebug << "Starting game screen" << std::endl;
+
+        auto gameManager = GameManager::getCurrent().lock();
+        BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
+        gameManager->setSocket(mGameSocket);
+
         mSubWindow->switchToScreen<GameScreen>();
         return;
     }

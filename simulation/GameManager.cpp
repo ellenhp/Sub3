@@ -1,10 +1,14 @@
 #include "GameManager.hpp"
 
+#include "server/SubServer.hpp"
+#include "network/UpdateMessage.hpp"
+
 std::shared_ptr<GameManager> GameManager::gameInst = NULL;
 
 GameManager::GameManager() :
-    mHasSetVessel(false), mHasSetPlayer(false)
+    mHasSetVessel(false), mHasSetPlayer(false), mSocket(NULL)
 {
+    mLastUpdate = std::chrono::steady_clock::now();
 }
 
 std::weak_ptr<GameManager> GameManager::getCurrent()
@@ -48,4 +52,34 @@ void GameManager::setCurrentVessel(VesselID vessel)
 bool GameManager::isInitialized()
 {
     return mHasSetVessel && mHasSetPlayer;
+}
+
+void GameManager::setSocket(std::shared_ptr<SubSocket> socket)
+{
+    BOOST_ASSERT_MSG(!mSocket, "Fatal: Socket already set");
+    mSocket = socket;
+}
+
+void GameManager::tick(float dt)
+{
+    auto localUpdateMessages = Ocean::getOcean()->tick(dt);
+
+    auto lastUpdate = std::chrono::steady_clock::now();
+
+    for (auto updateMessage : localUpdateMessages)
+    {
+        updateMessage->execute();
+    }
+
+    auto timeSinceUpdate = std::chrono::steady_clock::now() - mLastUpdate;
+    if (isInitialized() && timeSinceUpdate < network_interval(1))
+    {
+        VesselState newState = getCurrentVessel()->getNewState(dt);
+        auto updateMyVessel = std::make_shared<UpdateMessage>(mCurrentVessel, newState);
+        updateMyVessel->execute();
+        *mSocket << updateMyVessel;
+
+        mLastUpdate = std::chrono::steady_clock::now();
+    }
+
 }

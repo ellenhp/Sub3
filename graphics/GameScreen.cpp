@@ -8,7 +8,7 @@
 #include <sstream>
 
 GameScreen::GameScreen(SubWindow* subWindow) :
-    mSubWindow(subWindow), mGameWindow(NULL), mVesselUI(NULL)
+    mSubWindow(subWindow), mGameWindow(NULL), mVesselUI(NULL), mVesselWidget(NULL)
 {
 }
 
@@ -23,7 +23,8 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
     //Get the current vessel's UI.
     auto currentVessel = gameMgr->getCurrentVessel();
     mVesselUI = currentVessel->constructUI();
-    box->Pack(mVesselUI->setupUI());
+    mVesselWidget = mVesselUI->setupUI();
+    box->Pack(mVesselWidget);
 
     //Make a box for the toolbar thing at the bottom.
     auto bottomBox = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
@@ -51,8 +52,12 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
     fillWindow();
 }
 
-void GameScreen::updateScreen()
+void GameScreen::updateScreen(float dt)
 {
+    if (mVesselWidget)
+    {
+        mVesselUI->updateUI(dt);
+    }
     static int lastWidth = 0;
     static int lastHeight = 0;
     if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
@@ -61,6 +66,10 @@ void GameScreen::updateScreen()
         lastWidth = mSubWindow->getWidth();
         lastHeight = mSubWindow->getHeight();
     }
+
+    auto gameManager = GameManager::getCurrent().lock();
+    BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
+    gameManager->tick(dt);
 }
 
 void GameScreen::fillWindow()

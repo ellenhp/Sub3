@@ -12,7 +12,7 @@ public:
     GameScreen(SubWindow* subWindow);
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
-    void updateScreen();
+    void updateScreen(float dt);
 
 private:
     void fillWindow();
@@ -20,6 +20,7 @@ private:
     SubWindow* mSubWindow;
 
     sfg::Window::Ptr mGameWindow;
+    sfg::Widget::Ptr mVesselWidget;
 
     std::shared_ptr<Vessel::VesselUI> mVesselUI;
 

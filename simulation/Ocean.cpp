@@ -1,5 +1,6 @@
 #include "Ocean.hpp"
 
+#include "network/UpdateMessage.hpp"
 #include "simulation/Vessel.hpp"
 #include "simulation/GameManager.hpp"
 
@@ -21,15 +22,21 @@ Ocean* Ocean::getOcean()
     return oceanInst;
 }
 
-std::vector<std::shared_ptr<Message> > Ocean::tick(float dt) const
+std::vector<std::shared_ptr<Message>> Ocean::tick(float dt) const
 {
-    //TODO: update the world.
+    std::vector<std::shared_ptr<Message>> messages;
+    for (auto& vesselKV : mVessels)
+    {
+        auto newState = vesselKV.second->getNewState(dt);
+        messages.push_back(std::make_shared<UpdateMessage>(vesselKV.first, newState));
+    }
+    return messages;
 }
 
-std::vector<std::shared_ptr<Message> > Ocean::getInitiationMessages() const
+std::vector<std::shared_ptr<Message>> Ocean::getInitiationMessages() const
 {
     //Loop through all the vessels and ask them for the messages required to duplicate them.
-    std::vector<std::shared_ptr<Message> > messages;
+    std::vector<std::shared_ptr<Message>> messages;
     for (auto const & kv : mVessels)
     {
         //Get spawn messages.
@@ -61,7 +68,7 @@ void Ocean::localDespawnVessel(VesselID id)
 
 void Ocean::localUpdateVessel(VesselID id, VesselState state)
 {
-    subDebug << "Ocean: Updating " << id << std::endl;
+    //subDebug << "Ocean: Updating " << id << std::endl;
     BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
     mVessels[id]->setState(state);
 }

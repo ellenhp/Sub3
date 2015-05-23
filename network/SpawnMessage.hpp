@@ -39,7 +39,9 @@ public:
             return;
         }
         std::shared_ptr<VesselClass> vessel = std::make_shared<VesselClass>();
-        Ocean::getOcean()->localSpawnVessel(mVesselID, vessel);
+        auto ocean = Ocean::getOcean();
+        ocean->localSpawnVessel(mVesselID, vessel);
+        ocean->localUpdateVessel(mVesselID, mInitialState);
     }
 
 private:

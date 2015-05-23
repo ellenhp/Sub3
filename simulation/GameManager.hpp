@@ -5,6 +5,7 @@
 #include "simulation/PlayerID.hpp"
 #include "simulation/VesselID.hpp"
 #include "simulation/Vessel.hpp"
+#include "network/SubSocket.hpp"
 
 //GameManager controls some basic game stuff like who player is and what vessel they own.
 class GameManager
@@ -22,6 +23,8 @@ public:
     VesselID getCurrentVesselID();
     std::shared_ptr<Vessel> getCurrentVessel();
 
+    void setSocket(std::shared_ptr<SubSocket> socket);
+
     //Has the basic game information been initialized?
     bool isInitialized();
 
@@ -29,14 +32,20 @@ public:
     void setPlayer(PlayerID player);
     void setCurrentVessel(VesselID vessel);
 
+    void tick(float dt);
+
 private:
     static std::shared_ptr<GameManager> gameInst;
+
+    std::shared_ptr<SubSocket> mSocket;
 
     PlayerID mPlayer;
     VesselID mCurrentVessel;
 
     bool mHasSetPlayer;
     bool mHasSetVessel;
+
+    std::chrono::steady_clock::time_point mLastUpdate;
 
     uint32_t mNextVesselHandle = 0;
 

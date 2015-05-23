@@ -57,7 +57,7 @@ void MainMenu::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
     mDesktop = &desktop;
 }
 
-void MainMenu::updateScreen()
+void MainMenu::updateScreen(float dt)
 {
     static int lastWidth = 0;
     static int lastHeight = 0;

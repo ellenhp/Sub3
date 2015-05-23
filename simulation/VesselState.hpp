@@ -20,10 +20,15 @@ public:
     VesselState(Position pos, double v, double heading, double pitch);
     VesselState();
 
-    Position getLocation();
-    double getVelocity();
-    double getHeading();
-    double getPitch();
+    Position getLocation() const;
+    double getVelocity() const;
+    double getHeading() const;
+    double getPitch() const;
+
+    void setLocation(Position location);
+    void setVelocity(double velocity);
+    void setHeading(double heading);
+    void getPitch(double pitch);
 
 private:
     Position mLocation;

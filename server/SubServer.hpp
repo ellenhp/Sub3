@@ -12,7 +12,7 @@
 #include "simulation/PlayerID.hpp"
 #include "network/SubSocket.hpp"
 
-typedef std::chrono::duration<int, std::ratio<1, 10>> network_interval;
+typedef std::chrono::duration<double, std::ratio<1, 10>> network_interval;
 
 class SubSocket;
 
@@ -49,12 +49,11 @@ private:
     uint32_t mNextPlayerID;
 
     std::map<PlayerID, std::shared_ptr<SubSocket>> mClients;
-    std::multimap<PlayerID, std::shared_future<bool>> mSendMessageSuccessful;
 
     void serverLoop();
 
     void spawnVesselForPlayer(PlayerID player);
 
-    void sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message);
+    bool sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message);
     void kickPlayer(PlayerID player);
 };

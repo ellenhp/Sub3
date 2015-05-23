@@ -15,7 +15,7 @@ public:
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
 
-    void updateScreen();
+    void updateScreen(float dt);
 
 private:
     SubWindow* mSubWindow;

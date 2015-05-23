@@ -4,6 +4,6 @@ SubScreen::~SubScreen()
 {
 }
 
-void SubScreen::updateScreen()
+void SubScreen::updateScreen(float dt)
 {
 }

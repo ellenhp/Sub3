@@ -4,7 +4,7 @@
 #include "network/SetPlayerIDMessage.hpp"
 #include "network/SetCurrentVesselMessage.hpp"
 #include "simulation/Ocean.hpp"
-#include "simulation/vessels/DummyVessel.hpp"
+#include "simulation/vessels/BasicSurfaceVessel.hpp"
 
 #include <SFML/Network/TcpSocket.hpp>
 
@@ -56,13 +56,17 @@ uint16_t SubServer::getPort()
 
 void SubServer::serverLoop()
 {
+    using seconds = std::chrono::duration<float, std::ratio<1, 1>>;
+
+    auto lastUpdate = std::chrono::steady_clock::now();
+
+    //Time to wake up after sleeping.
+    auto end_time = std::chrono::steady_clock::now() + network_interval(1);
+
     mKeepRunningMutex.lock();
     while (mKeepRunning)
     {
         mKeepRunningMutex.unlock();
-
-        //Time to wake up after sleeping.
-        auto end_time = std::chrono::steady_clock::now() + network_interval(1);
 
         auto newSocket = std::make_shared<sf::TcpSocket>();
         while (mListener.accept(*newSocket) == sf::Socket::Status::Done)
@@ -91,30 +95,47 @@ void SubServer::serverLoop()
             subDebug << "New player: " << newPlayerID << std::endl;
         }
 
-        //TODO update the ocean, run AI.
+        //Run the clients' messages.
+        for (auto& clientKV : mClients)
+        {
+            std::shared_ptr<Message> message = NULL;
+            while (clientKV.second->hasPackets())
+            {
+                *clientKV.second >> message;
+                message->execute();
+            }
+        }
+
+        //TODO run AI.
+
+        auto duration = lastUpdate - std::chrono::steady_clock::now();
+        lastUpdate = std::chrono::steady_clock::now();
+
+        auto updateMessages = Ocean::getOcean()->tick(seconds(duration).count());
+
+        for (auto message : updateMessages)
+        {
+            message->execute();
+        }
 
         for (auto& clientKV : mClients)
         {
-            //TODO update all the clients.
-        }
-
-        for (auto it = mSendMessageSuccessful.begin(); it != mSendMessageSuccessful.end(); it++)
-        {
-            //Kick all clients with network troubles. (sorry)
-            if (it->second.wait_for(std::chrono::microseconds(1)) == std::future_status::ready)
+            for (auto message : updateMessages)
             {
-                bool messageSent = it->second.get();
-                if (!messageSent)
+                bool success = sendMessageToPlayer(clientKV.first, message);
+
+                //If we didn't succeed sending the message, move on to the next client.
+                if (!success)
                 {
-                    kickPlayer(it->first);
+                    kickPlayer(clientKV.first);
+                    break;
                 }
-                mSendMessageSuccessful.erase(it);
-                continue;
             }
         }
 
         //Sleep for a bit.
         std::this_thread::sleep_until(end_time);
+        end_time = std::chrono::steady_clock::now() + network_interval(1);
 
         mKeepRunningMutex.lock();
     }
@@ -130,8 +151,18 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
 
     VesselID newVesselID(player, vesselNum);
 
+    //Create a new VesselState.
+    Position newPos;
+    newPos.setLatitude(0);
+    newPos.setLongitude(0);
+    newPos.setAltitude(0);
+    VesselState newState;
+    subDebug << "important pos: (" << newPos.getLatitude() << ", " << newPos.getLongitude() << ")" << std::endl;
+
     //Create a message for spawning the new vessel.
-    auto spawnMessage = std::make_shared<SpawnMessage<DummyVessel>>(newVesselID, VesselState());
+    auto spawnMessage = std::make_shared<SpawnMessage<BasicSurfaceVessel>>(newVesselID, newState);
+
+    spawnMessage->execute();
 
     //Let everybody know that we're spawning something.
     for (auto& clientKV : mClients)
@@ -143,11 +174,11 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
     sendMessageToPlayer(player, std::make_shared<SetCurrentVesselMessage>(newVesselID));
 }
 
-void SubServer::sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message)
+bool SubServer::sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message)
 {
     BOOST_ASSERT_MSG(mClients.count(player) > 0, "Fatal: Player doesn't exist or disconnected.");
-    auto messageResult = (*mClients.at(player) << message).share();
-    mSendMessageSuccessful.insert(std::make_pair(player, messageResult));
+    bool messageResult = (*mClients.at(player) << message);
+    return messageResult;
 }
 
 void SubServer::kickPlayer(PlayerID player)

@@ -47,7 +47,7 @@ void SubWindow::run()
         //Update the screen.
         if (mCurrentScreen)
         {
-            mCurrentScreen->updateScreen();
+            mCurrentScreen->updateScreen(seconds(duration).count());
         }
 
         //Draw the GUI.

@@ -21,7 +21,7 @@ public:
     bool isConnected();
 
     //Send and recieve entire messages
-    friend std::future<bool> operator<<(SubSocket& socket, std::shared_ptr<Message> message);
+    friend bool operator<<(SubSocket& socket, std::shared_ptr<Message> message);
     friend bool operator>>(SubSocket& socket, std::shared_ptr<Message>& message);
 
 private:
@@ -30,8 +30,5 @@ private:
     std::deque<std::shared_ptr<Message> > mQueue;
 
     void queuePackets();
-
-    //Returns true if the packet was successfully sent. False otherwise.
-    bool sendPacketAsync(std::shared_ptr<Message> message);
 
 };

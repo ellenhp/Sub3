@@ -8,21 +8,21 @@ class DummyVessel : public Vessel
 public:
     DummyVessel();
 
-    class DummyUI;
+    class UI;
 
     VesselState getNewState(float dt);
 
-    std::vector<std::shared_ptr<Message> > getSpawnMessages(VesselID vesselID);
+    std::vector<std::shared_ptr<Message>> getSpawnMessages(VesselID vesselID);
 
     //Get a dummy UI.
     virtual std::shared_ptr<VesselUI> constructUI();
 
 };
 
-class DummyVessel::DummyUI : public Vessel::VesselUI
+class DummyVessel::UI : public Vessel::VesselUI
 {
 public:
-    virtual ~DummyUI();
+    virtual ~UI();
     virtual std::shared_ptr<sfg::Widget> setupUI();
     virtual void updateUI(double dt);
 };

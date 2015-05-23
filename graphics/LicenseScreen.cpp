@@ -50,7 +50,7 @@ void LicenseScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> 
     centerWindow();
 }
 
-void LicenseScreen::updateScreen()
+void LicenseScreen::updateScreen(float dt)
 {
     static int lastWidth = 0;
     static int lastHeight = 0;

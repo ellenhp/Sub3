@@ -6,26 +6,46 @@ VesselState::VesselState(Position pos, double v, double heading, double pitch) :
 }
 
 VesselState::VesselState() :
-    mLocation(0, 0, 0)
+    mLocation()
 {
 }
 
-Position VesselState::getLocation()
+Position VesselState::getLocation() const
 {
     return mLocation;
 }
 
-double VesselState::getVelocity()
+double VesselState::getVelocity() const
 {
     return mVelocity;
 }
 
-double VesselState::getHeading()
+double VesselState::getHeading() const
 {
     return mHeading;
 }
 
-double VesselState::getPitch()
+double VesselState::getPitch() const
 {
     return mPitch;
+}
+
+void VesselState::setLocation(Position location)
+{
+    mLocation = location;
+}
+
+void VesselState::setVelocity(double velocity)
+{
+    mVelocity = velocity;
+}
+
+void VesselState::setHeading(double heading)
+{
+    mHeading = heading;
+}
+
+void VesselState::getPitch(double pitch)
+{
+    mPitch = pitch;
 }

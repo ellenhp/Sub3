@@ -12,7 +12,7 @@ VesselState DummyVessel::getNewState(float dt)
     return mState;
 }
 
-std::vector<std::shared_ptr<Message> > DummyVessel::getSpawnMessages(VesselID vesselID)
+std::vector<std::shared_ptr<Message>> DummyVessel::getSpawnMessages(VesselID vesselID)
 {
     //Just return the one spawn message. Nothing special here.
     std::vector<std::shared_ptr<Message> > messages;
@@ -22,18 +22,18 @@ std::vector<std::shared_ptr<Message> > DummyVessel::getSpawnMessages(VesselID ve
 
 std::shared_ptr<Vessel::VesselUI> DummyVessel::constructUI()
 {
-    return std::make_shared<DummyVessel::DummyUI>();
+    return std::make_shared<DummyVessel::UI>();
 }
 
-DummyVessel::DummyUI::~DummyUI()
+DummyVessel::UI::~UI()
 {
 }
 
-std::shared_ptr<sfg::Widget> DummyVessel::DummyUI::setupUI()
+std::shared_ptr<sfg::Widget> DummyVessel::UI::setupUI()
 {
     return sfg::Label::Create("Hello");
 }
 
-void DummyVessel::DummyUI::updateUI(double dt)
+void DummyVessel::UI::updateUI(double dt)
 {
 }

@@ -3,7 +3,7 @@
 #include "usml/types/wposition1.h"
 
 //Encapsulates a USML wposition1.
-class Position : public usml::types::wposition1
+class Position : protected usml::types::wposition1
 {
     //Serialization boilerplate
     friend class boost::serialization::access;
@@ -34,8 +34,17 @@ class Position : public usml::types::wposition1
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 public:
+    Position();
     Position(double rho, double theta, double phi);
-    Position(const Position& other);
+    Position(const Position& other, double range, double bearing);
+
+    double getLatitude() const;
+    double getLongitude() const;
+    double getAltitude() const;
+
+    void setLatitude(double lat);
+    void setLongitude(double lng);
+    void setAltitude(double alt);
 
     //Distance to another Position object in meters.
     double distanceTo(Position other);

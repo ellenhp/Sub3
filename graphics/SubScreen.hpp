@@ -13,5 +13,5 @@ public:
 
     virtual void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args) = 0;
 
-    virtual void updateScreen();
+    virtual void updateScreen(float dt);
 };
