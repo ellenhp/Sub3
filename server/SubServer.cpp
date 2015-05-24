@@ -4,7 +4,7 @@
 #include "network/SetPlayerIDMessage.hpp"
 #include "network/SetCurrentVesselMessage.hpp"
 #include "simulation/Ocean.hpp"
-#include "simulation/vessels/BasicSurfaceVessel.hpp"
+#include "simulation/vessels/BasicSubmarine.hpp"
 
 #include <SFML/Network/TcpSocket.hpp>
 
@@ -108,7 +108,7 @@ void SubServer::serverLoop()
 
         //TODO run AI.
 
-        auto duration = lastUpdate - std::chrono::steady_clock::now();
+        auto duration = std::chrono::steady_clock::now() - lastUpdate;
         lastUpdate = std::chrono::steady_clock::now();
 
         auto updateMessages = Ocean::getOcean()->tick(seconds(duration).count());
@@ -160,7 +160,7 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
     subDebug << "important pos: (" << newPos.getLatitude() << ", " << newPos.getLongitude() << ")" << std::endl;
 
     //Create a message for spawning the new vessel.
-    auto spawnMessage = std::make_shared<SpawnMessage<BasicSurfaceVessel>>(newVesselID, newState);
+    auto spawnMessage = std::make_shared<SpawnMessage<BasicSubmarine>>(newVesselID, newState);
 
     spawnMessage->execute();
 

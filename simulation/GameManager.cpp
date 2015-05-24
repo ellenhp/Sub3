@@ -72,13 +72,11 @@ void GameManager::tick(float dt)
     }
 
     auto timeSinceUpdate = std::chrono::steady_clock::now() - mLastUpdate;
-    if (isInitialized() && timeSinceUpdate < network_interval(1))
+    if (isInitialized() && timeSinceUpdate > network_interval(1))
     {
-        VesselState newState = getCurrentVessel()->getNewState(dt);
+        VesselState newState = getCurrentVessel()->getState();
         auto updateMyVessel = std::make_shared<UpdateMessage>(mCurrentVessel, newState);
-        updateMyVessel->execute();
         *mSocket << updateMyVessel;
-
         mLastUpdate = std::chrono::steady_clock::now();
     }
 

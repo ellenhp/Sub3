@@ -2,11 +2,13 @@ set(SOURCE
    ${SOURCE}
    ${CMAKE_CURRENT_SOURCE_DIR}/DummyVessel.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/BasicSurfaceVessel.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/BasicSubmarine.cpp
    PARENT_SCOPE
 )
 set(HEADERS
    ${HEADERS}
    ${CMAKE_CURRENT_SOURCE_DIR}/DummyVessel.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/BasicSurfaceVessel.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/BasicSubmarine.hpp
    PARENT_SCOPE
 )

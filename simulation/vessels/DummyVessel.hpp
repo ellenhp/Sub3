@@ -15,7 +15,7 @@ public:
     std::vector<std::shared_ptr<Message>> getSpawnMessages(VesselID vesselID);
 
     //Get a dummy UI.
-    virtual std::shared_ptr<VesselUI> constructUI();
+    virtual std::shared_ptr<VesselUI> constructUI(std::shared_ptr<Vessel> vessel);
 
 };
 

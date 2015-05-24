@@ -28,7 +28,7 @@ public:
     void setLocation(Position location);
     void setVelocity(double velocity);
     void setHeading(double heading);
-    void getPitch(double pitch);
+    void setPitch(double pitch);
 
 private:
     Position mLocation;

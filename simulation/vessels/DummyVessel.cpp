@@ -20,7 +20,7 @@ std::vector<std::shared_ptr<Message>> DummyVessel::getSpawnMessages(VesselID ves
     return messages;
 }
 
-std::shared_ptr<Vessel::VesselUI> DummyVessel::constructUI()
+std::shared_ptr<Vessel::VesselUI> DummyVessel::constructUI(std::shared_ptr<Vessel> vessel)
 {
     return std::make_shared<DummyVessel::UI>();
 }
