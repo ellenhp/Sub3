@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8)
 project(Sub3)
 
 # Set default build configuration
@@ -44,9 +44,12 @@ set(SERVER_NAME "sub3_server")
 add_executable(${SERVER_NAME} ${PROJECT_SOURCE_DIR}/server.cpp $<TARGET_OBJECTS:Sub3SharedObjects>)
 
 # Enable C++11
-target_compile_features(Sub3SharedObjects PRIVATE cxx_range_for)
-target_compile_features(${GAME_NAME} PRIVATE cxx_range_for)
-target_compile_features(${SERVER_NAME} PRIVATE cxx_range_for)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Find threads
+find_package (Threads)
+target_link_libraries(${GAME_NAME} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${SERVER_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 # Find Boost
 find_package(Boost COMPONENTS serialization system)
@@ -57,7 +60,7 @@ if(Boost_FOUND)
 endif()
 
 # Find SFML
-find_package(SFML 2 REQUIRED system window graphics network audio)
+find_package(SFML 2.3 REQUIRED system window graphics network audio)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${GAME_NAME} ${SFML_LIBRARIES})
@@ -65,7 +68,7 @@ if(SFML_FOUND)
 endif()
 
 # Find SFGUI
-find_package(SFGUI)
+find_package(SFGUI REQUIRED)
 if(SFGUI_FOUND)
     include_directories(${SFGUI_INCLUDE_DIR})
     target_link_libraries(${GAME_NAME} ${SFGUI_LIBRARY})
@@ -75,6 +78,16 @@ endif()
 # Find USML
 find_package(USML REQUIRED)
 if(USML_FOUND)
+    message("Copying oceanographic data. This could take a while.")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/temperature_seasonal_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/temperature_monthly_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/salinity_seasonal_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/woa09/salinity_monthly_1deg.nc" DESTINATION "${PROJECT_BINARY_DIR}/usml/woa09/")
+
+    file(COPY "${USML_INCLUDE_DIRS}/usml/data/bathymetry/ETOPO1_Ice_g_gmt4.grd" DESTINATION "${PROJECT_BINARY_DIR}/usml/bathymetry/")
+
     include_directories(${USML_INCLUDE_DIRS})
     target_link_libraries(${GAME_NAME} ${USML_LIBRARIES})
     target_link_libraries(${SERVER_NAME} ${USML_LIBRARIES})
