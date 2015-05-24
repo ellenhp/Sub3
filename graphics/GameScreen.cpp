@@ -41,7 +41,7 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
 
     //Get the current vessel's UI.
     auto currentVessel = gameMgr->getCurrentVessel();
-    mVesselUI = currentVessel->constructUI();
+    mVesselUI = currentVessel->constructUI(currentVessel);
     mVesselWidget = mVesselUI->setupUI();
     box->Pack(mVesselWidget);
 

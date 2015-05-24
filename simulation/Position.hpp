@@ -54,7 +54,7 @@ class Position : protected usml::types::wposition1
 public:
     Position();
     Position(double rho, double theta, double phi);
-    Position(const Position& other, double range, double bearing);
+    Position(const Position& other, double range, double bearing, double pitch = 0);
 
     double getLatitude() const;
     double getLongitude() const;
@@ -69,4 +69,7 @@ public:
 
     //Bearing to another Position object in radians
     double bearingTo(Position other);
+
+    static double toRadians(double degrees);
+    static double toDegrees(double radians);
 };

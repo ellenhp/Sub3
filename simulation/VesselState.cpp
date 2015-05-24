@@ -63,7 +63,7 @@ void VesselState::setHeading(double heading)
     mHeading = heading;
 }
 
-void VesselState::getPitch(double pitch)
+void VesselState::setPitch(double pitch)
 {
     mPitch = pitch;
 }

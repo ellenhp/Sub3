@@ -41,8 +41,9 @@ public:
     //More complex Vessels might require custom initialization that will be generated here.
     virtual std::vector<std::shared_ptr<Message>> getSpawnMessages(VesselID vesselID) = 0;
 
-    //Get the UI for allowing a player to control this Vessel.
-    virtual std::shared_ptr<VesselUI> constructUI() = 0;
+    //Get the UI for allowing a player to control the vessel passed in.
+    //Internally, the UI should create a weak_ptr to the vessel.
+    virtual std::shared_ptr<VesselUI> constructUI(std::shared_ptr<Vessel> vessel) = 0;
 
 protected:
     VesselState mState;

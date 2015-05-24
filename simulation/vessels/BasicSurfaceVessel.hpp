@@ -38,13 +38,13 @@ public:
     void setVelocity(double velocity);
 
     //Get a UI for this vessel.
-    virtual std::shared_ptr<VesselUI> constructUI();
+    virtual std::shared_ptr<VesselUI> constructUI(std::shared_ptr<Vessel> vessel);
 };
 
 class BasicSurfaceVessel::UI : public Vessel::VesselUI
 {
 public:
-    UI(BasicSurfaceVessel* vessel);
+    UI(std::weak_ptr<BasicSurfaceVessel> vessel);
     virtual ~UI();
 
     std::shared_ptr<sfg::Widget> setupUI();
@@ -56,5 +56,5 @@ private:
 
     sfg::Label::Ptr mLocation;
 
-    BasicSurfaceVessel* mVessel;
+    std::weak_ptr<BasicSurfaceVessel> mVessel;
 };
