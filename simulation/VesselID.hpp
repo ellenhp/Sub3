@@ -50,6 +50,7 @@ public:
 
     friend bool operator<(const VesselID& left, const VesselID& right);
     friend bool operator>(const VesselID& left, const VesselID& right);
+    friend bool operator==(const VesselID& left, const VesselID& right);
 
     friend std::ostream& operator<<(std::ostream& stream, VesselID& vesselID);
 

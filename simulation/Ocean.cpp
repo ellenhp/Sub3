@@ -67,28 +67,36 @@ std::vector<std::shared_ptr<Message>> Ocean::getInitiationMessages() const
 
 void Ocean::localResetOcean()
 {
+    mAccessMutex.lock();
     mVessels.clear();
+    mAccessMutex.lock();
 }
 
 void Ocean::localSpawnVessel(VesselID id, std::shared_ptr<Vessel> vessel)
 {
     subDebug << "Ocean: Spawning " << id << std::endl;
     BOOST_ASSERT_MSG(!mVessels.count(id), "Fatal: Ocean already contains vessel to be spawned");
+    mAccessMutex.lock();
     mVessels[id] = vessel;
+    mAccessMutex.unlock();
 }
 
 void Ocean::localDespawnVessel(VesselID id)
 {
     subDebug << "Ocean: Despawning " << id << std::endl;
     BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be despawned");
+    mAccessMutex.lock();
     mVessels.erase(id);
+    mAccessMutex.unlock();
 }
 
 void Ocean::localUpdateVessel(VesselID id, VesselState state)
 {
-    //subDebug << "Ocean: Updating " << id << std::endl;
+    // subDebug << "Ocean: Updating " << id << std::endl;
     BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
+    mAccessMutex.lock();
     mVessels[id]->setState(state);
+    mAccessMutex.unlock();
 }
 
 void Ocean::localSetMonth(Ocean::Month month)
@@ -96,23 +104,23 @@ void Ocean::localSetMonth(Ocean::Month month)
     mMonth = month;
 }
 
-Ocean::Month Ocean::getMonth()
+Ocean::Month Ocean::getMonth() const
 {
     return mMonth;
 }
 
-bool Ocean::getHasVessel(VesselID id)
+bool Ocean::getHasVessel(VesselID id) const
 {
     return mVessels.count(id) != 0;
 }
 
-VesselState Ocean::getState(VesselID id)
+VesselState Ocean::getState(VesselID id) const
 {
     BOOST_ASSERT_MSG(getHasVessel(id), "Fatal: Ocean doesn't contain vessel to get state of");
     return mVessels.at(id)->getState();
 }
 
-std::vector<std::shared_ptr<const Vessel>> Ocean::getNearestVessels(double d, std::shared_ptr<const Vessel> target)
+std::vector<VesselID> Ocean::getNearestVesselIDs(double d, std::shared_ptr<const Vessel> target) const
 {
     //NULL means we should use our player's vessel.
     if (target == NULL)
@@ -124,7 +132,7 @@ std::vector<std::shared_ptr<const Vessel>> Ocean::getNearestVessels(double d, st
         target = gameManager->getCurrentVessel();
     }
 
-    std::vector<std::shared_ptr<const Vessel>> nearestVessels;
+    std::vector<VesselID> nearestVessels;
 
     auto targetPos = target->getState().getLocation();
     for (auto& vesselKV : mVessels)
@@ -132,9 +140,19 @@ std::vector<std::shared_ptr<const Vessel>> Ocean::getNearestVessels(double d, st
         auto otherLocation = vesselKV.second->getState().getLocation();
         if (targetPos.distanceTo(otherLocation) < d)
         {
-            nearestVessels.push_back(vesselKV.second);
+            nearestVessels.push_back(vesselKV.first);
         }
     }
 
     return nearestVessels;
+}
+
+void Ocean::lockAccess()
+{
+    mAccessMutex.lock();
+}
+
+void Ocean::unlockAccess()
+{
+    mAccessMutex.unlock();
 }

@@ -39,7 +39,10 @@ Position::Position(const Position& other, double range, double bearing, double p
     const double alt1 = other.altitude();
     const double radius = usml::types::wposition::earth_radius + other.altitude();
 
-    //Convert to radians.
+    bearing = toRadians(bearing);
+    pitch = toRadians(pitch);
+
+    //Convert range to radians.
     double rangeRadians = range / radius;
     double verticalRange = range * sin(pitch);
     double horizontalRange = rangeRadians * cos(pitch);

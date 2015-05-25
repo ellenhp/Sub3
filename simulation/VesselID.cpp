@@ -64,6 +64,11 @@ bool operator>(const VesselID& left, const VesselID& right)
     }
 }
 
+bool operator==(const VesselID& left, const VesselID& right)
+{
+    return (left.mPlayer == right.mPlayer) && (left.mPlayerVesselID == right.mPlayerVesselID);
+}
+
 std::ostream& operator<<(std::ostream& stream, VesselID& vesselID)
 {
     stream << vesselID.mPlayer << "'s vessel " << vesselID.mPlayerVesselID;

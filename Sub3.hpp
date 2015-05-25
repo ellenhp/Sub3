@@ -22,3 +22,6 @@
 
 #include "debug/SubDebug.hpp"
 #include "config.hpp"
+
+//Logarithmic spacing between 20hz and roughly 40khz
+#define FREQ_AXIS usml::types::seq_log(20.0, 2, 11)

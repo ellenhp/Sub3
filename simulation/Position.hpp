@@ -21,7 +21,7 @@
 #include "usml/types/wposition1.h"
 
 //Encapsulates a USML wposition1.
-class Position : protected usml::types::wposition1
+class Position : public usml::types::wposition1
 {
     //Serialization boilerplate
     friend class boost::serialization::access;

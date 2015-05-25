@@ -175,7 +175,6 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
     newPos.setLongitude(0);
     newPos.setAltitude(0);
     VesselState newState;
-    subDebug << "important pos: (" << newPos.getLatitude() << ", " << newPos.getLongitude() << ")" << std::endl;
 
     //Create a message for spawning the new vessel.
     auto spawnMessage = std::make_shared<SpawnMessage<BasicSubmarine>>(newVesselID, newState);

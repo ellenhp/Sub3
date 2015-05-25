@@ -21,6 +21,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "Sub3.hpp"
 #include "network/Message.hpp"
@@ -67,12 +68,15 @@ public:
     void localUpdateVessel(VesselID id, VesselState state);
     void localSetMonth(Month month);
 
-    Month getMonth();
-    bool getHasVessel(VesselID id);
-    VesselState getState(VesselID id);
+    Month getMonth() const;
+    bool getHasVessel(VesselID id) const;
+    VesselState getState(VesselID id) const;
 
-    //Get all vessels within d meters.
-    std::vector<std::shared_ptr<const Vessel>> getNearestVessels(double d, std::shared_ptr<const Vessel> target = NULL);
+    //Get all vessel ID's within d meters.
+    std::vector<VesselID> getNearestVesselIDs(double d, std::shared_ptr<const Vessel> target = NULL) const;
+
+    void lockAccess();
+    void unlockAccess();
 
     //This lets GameManager give out references to vessels at its discretion.
     friend class GameManager;
@@ -84,5 +88,7 @@ private:
     Month mMonth;
 
     std::map<VesselID, std::shared_ptr<Vessel>> mVessels;
+
+    std::mutex mAccessMutex;
 
 };

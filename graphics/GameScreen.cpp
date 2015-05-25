@@ -21,6 +21,7 @@
 #include "Sub3.hpp"
 #include "graphics/SubWindow.hpp"
 #include "simulation/GameManager.hpp"
+#include "simulation/USMLManager.hpp"
 
 #include <SFGUI/Widgets.hpp>
 
@@ -38,6 +39,9 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
     //Get the current GameManager and make sure it isn't NULL.
     auto gameMgr = GameManager::getCurrent().lock();
     BOOST_ASSERT_MSG(gameMgr, "Fatal: GameManager doesn't exist in GameScreen.setupScreen()");
+
+    //TODO: find a better place to do this.
+    USMLManager::getInstance()->start(gameMgr->getCurrentVesselID());
 
     //Get the current vessel's UI.
     auto currentVessel = gameMgr->getCurrentVessel();

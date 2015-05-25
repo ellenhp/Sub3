@@ -18,12 +18,15 @@
 
 #include "SubWindow.hpp"
 
+#include <thread>
 #include <chrono>
 
 #include <SFML/Window/Event.hpp>
 
 #include "graphics/MainMenu.hpp"
 #include "Sub3.hpp"
+
+typedef std::chrono::duration<int, std::ratio<1, 60>> frameTime;
 
 SubWindow::SubWindow(sf::VideoMode videoMode) :
     mRenderWindow(videoMode, "Sub^3"), mCurrentScreen(NULL)
@@ -50,6 +53,8 @@ void SubWindow::run()
     //Handle events indefinitely.
     sf::Event event;
     while (mRenderWindow.isOpen()) {
+        auto startTime = std::chrono::steady_clock::now();
+
         while (mRenderWindow.pollEvent(event)) {
             mDesktop.HandleEvent(event);
             if (event.type == sf::Event::Closed) {
@@ -72,6 +77,8 @@ void SubWindow::run()
         mRenderWindow.clear();
         mGui.Display(mRenderWindow);
         mRenderWindow.display();
+
+        std::this_thread::sleep_until(startTime + frameTime(1));
     }
 }
 

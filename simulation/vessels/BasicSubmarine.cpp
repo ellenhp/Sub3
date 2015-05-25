@@ -133,8 +133,13 @@ void BasicSubmarine::UI::updateUI(double dt)
 
         mLocation->SetText(locationText.str());
 
-        vessel->setHeading(mHeading->GetValue() * M_PI / 180.0); //Convert to radians.
+        auto ocean = Ocean::getOcean();
+        ocean->lockAccess();
+
+        vessel->setHeading(mHeading->GetValue());
+        vessel->setPitch(mPitch->GetValue());
         vessel->setVelocity(mVelocity->GetValue() * 0.514444444); //Convert to m/s.
-        vessel->setPitch(mPitch->GetValue() * M_PI / 180.0); //Convert to m/s.
+
+        ocean->unlockAccess();
     }
 }

@@ -22,6 +22,7 @@
 #include "graphics/GameScreen.hpp"
 #include "network/SubSocket.hpp"
 #include "simulation/GameManager.hpp"
+#include "simulation/USMLManager.hpp"
 
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
@@ -192,56 +193,18 @@ void LoadingScreen::doLoading()
         mLoadingMutex.unlock();
         return;
     }
-    else
-    {
-        //TODO: wait until we get a message that tells us what month it is and where we are.
-    }
 
     mLoadingMutex.lock();
-    mLoadingText = "Loading Ocean Temperature Data...";
+    mLoadingText = "Loading Oceanographic Data...";
     mLoadingMutex.unlock();
 
-    //TODO: use correct location.
-    const double lat1 = 30.0;
-    const double lat2 = 46.0;
-    const double lng1 = -8.0;
-    const double lng2 = 37.0;
+    subDebug << "Loading Oceanographic Data..." << std::endl;
 
-    //Load temperature and salinity.
-    //TODO: Use the correct month.
-    netcdf_woa* temperature = new netcdf_woa(
-        "usml/woa09/temperature_seasonal_1deg.nc",
-        "usml/woa09/temperature_monthly_1deg.nc",
-        10, lat1, lat2, lng1, lng2);
-
-    mLoadingMutex.lock();
-    mLoadingText = "Loading Ocean Salinity Data...";
-    mLoadingMutex.unlock();
-
-    netcdf_woa* salinity = new netcdf_woa(
-        "usml/woa09/salinity_seasonal_1deg.nc",
-        "usml/woa09/salinity_monthly_1deg.nc",
-        10, lat1, lat2, lng1, lng2);
-
-    //Compute sound speed.
-    profile_model* profile = new profile_lock(new profile_grid<double,3>(
-        data_grid_mackenzie::construct(temperature, salinity)));
-
-    mLoadingMutex.lock();
-    mLoadingText = "Loading Bathymetry...";
-    mLoadingMutex.unlock();
-
-    //Load bathymetry.
-    boundary_model* bottom = new boundary_lock(new boundary_grid<double,2>(new netcdf_bathy(
-        "usml/bathymetry/ETOPO1_Ice_g_gmt4.grd",
-        lat1, lat2, lng1, lng2)));
-
-    //TODO: Get weather data somehow?
-    boundary_model* surface = new boundary_lock(new boundary_flat());
-
-    //Updated the ocean_shared reference.
-    ocean_shared::reference ocean(new ocean_model(surface, bottom, profile));
-    ocean_shared::update(ocean);
+    //Let the USMLManager do the loading.
+    auto pos = gameManager->getCurrentVessel()->getState().getLocation();
+    USMLManager::getInstance()->loadDataAround(pos);
+    
+    subDebug << "Done loading Oceanographic Data..." << std::endl;
 
     mLoadingMutex.lock();
     mLoadingText = "Done!";
