@@ -126,6 +126,7 @@ void SubServer::serverLoop()
 
         //TODO run AI.
 
+        //Get the time since the last Ocean update.
         auto duration = std::chrono::steady_clock::now() - lastUpdate;
         lastUpdate = std::chrono::steady_clock::now();
 
@@ -140,9 +141,13 @@ void SubServer::serverLoop()
         {
             for (auto message : updateMessages)
             {
+                if (!message->shouldServerSendTo(clientKV.first))
+                {
+                    continue;
+                }
                 bool success = sendMessageToPlayer(clientKV.first, message);
 
-                //If we didn't succeed sending the message, move on to the next client.
+                //If we didn't succeed sending the message to a client, kick them and move on.
                 if (!success)
                 {
                     kickPlayer(clientKV.first);

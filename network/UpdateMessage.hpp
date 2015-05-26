@@ -37,6 +37,8 @@ public:
     UpdateMessage();
     UpdateMessage(VesselID vesselID, VesselState newState);
 
+    bool shouldServerSendTo(PlayerID player);
+
     void execute();
 
 private:

@@ -24,6 +24,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+#include "simulation/PlayerID.hpp"
+
 class Ocean;
 
 class Message
@@ -39,6 +41,11 @@ class Message
 
 public:
     Message();
+
+    virtual bool shouldServerSendTo(PlayerID player)
+    {
+        return true;
+    }
 
     //This tells the packet to do whatever it needs to do to accomplish its mission.
     virtual void execute() = 0;

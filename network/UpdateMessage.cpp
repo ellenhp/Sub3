@@ -31,6 +31,11 @@ UpdateMessage::UpdateMessage(VesselID vesselID, VesselState newState) :
 {
 }
 
+bool UpdateMessage::shouldServerSendTo(PlayerID player)
+{
+    return player != mVesselID.getPlayer();
+}
+
 void UpdateMessage::execute()
 {
     Ocean::getOcean()->localUpdateVessel(mVesselID, mNewState);

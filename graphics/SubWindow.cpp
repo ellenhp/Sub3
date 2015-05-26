@@ -37,7 +37,7 @@ SubWindow::SubWindow(sf::VideoMode videoMode) :
 
 void SubWindow::run()
 {
-    using seconds = std::chrono::duration<float, std::ratio<1, 1>>;
+    using seconds = std::chrono::duration<float>;
 
     //We're ready to show the window.
     mRenderWindow.setVisible(true);
@@ -53,7 +53,6 @@ void SubWindow::run()
     //Handle events indefinitely.
     sf::Event event;
     while (mRenderWindow.isOpen()) {
-        auto startTime = std::chrono::steady_clock::now();
 
         while (mRenderWindow.pollEvent(event)) {
             mDesktop.HandleEvent(event);
