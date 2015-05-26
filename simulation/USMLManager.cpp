@@ -156,18 +156,14 @@ void USMLManager::usmlLoop()
         }
         else
         {
-            subDebug << "No neighbors" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
-    subDebug << "USML thread done" << std::endl;
 }
 
 //This method takes a while. To be called from usmlLoop() only.
 void USMLManager::usmlCalculate(VesselID emitter, std::vector<VesselID> listeners)
 {
-    subDebug << "begin usmlCalculate" << std::endl;
-
     auto ocean = Ocean::getOcean();
 
     //These local variables store the positions of the emitter and listener so we don't have to keep locking and unlocking.
@@ -190,41 +186,44 @@ void USMLManager::usmlCalculate(VesselID emitter, std::vector<VesselID> listener
         double lat = listenerPositions[i].getLatitude();
         double lng = listenerPositions[i].getLongitude();
         double alt = listenerPositions[i].getAltitude();
-        subDebug << "listener " << i << " is at " << lat << " deg, " << lng << " deg, " << alt << "m" << std::endl;
         wListeners.latitude(i, 0, lat);
         wListeners.longitude(i, 0, lng);
         wListeners.altitude(i, 0, alt);
     }
 
     //Define the rays.
-    seq_linear de(-85.0, 5.0, 85.0);
-    seq_linear az(0.0, 5.0, 355.0);
+    seq_linear de(-85.0, 5, 85.0);
+    seq_linear az(-0.0, 10.0, 350.0);
 
     auto oceanModel = ocean_shared::current();
 
-    wave_queue wave(*oceanModel, FREQ_AXIS, emitterPosition, de, az, timeStep);
+    wave_queue wave(*oceanModel, FREQ_AXIS, emitterPosition, de, az, timeStep, &wListeners);
 
     eigenray_collection loss(FREQ_AXIS, emitterPosition, de, az, timeStep, &wListeners);
     wave.add_eigenray_listener(&loss);
 
-    subDebug << "begin calculating eigenrays" << std::endl;
+    //subDebug << "begin calculating eigenrays" << std::endl;
 
-    while (getContinuing() && wave.time() < maxTime)
+    while (wave.time() < maxTime)
     {
         wave.step();
+        if (!getContinuing())
+        {
+            return;
+        }
     }
 
     loss.sum_eigenrays();
 
-    subDebug << "done calculating eigenrays" << std::endl;
+    //subDebug << "done calculating eigenrays" << std::endl;
     for (int listenerIndex = 0; listenerIndex < listenerPositions.size(); listenerIndex++)
     {
-        subDebug << "eigenray for target " << listenerIndex << std::endl;
-        auto eigenrayTotal = loss.total(listenerIndex, 0);
-        auto intensities = eigenrayTotal->intensity;
-        for (int freqIndex = 0; freqIndex < FREQ_AXIS.size(); freqIndex++)
+        //subDebug << "total for target " << listenerIndex << std::endl;
+        auto totalEigenray = loss.total(listenerIndex, 0);
+        auto intensities = totalEigenray->intensity;
+        for (int freqIndex = 0; freqIndex < intensities.size(); freqIndex++)
         {
-            subDebug << FREQ_AXIS[freqIndex] << " Hz: " << intensities[freqIndex] << "dB" << std::endl;
+            //subDebug << FREQ_AXIS[freqIndex] << "Hz: " << intensities[freqIndex] << "dB" << std::endl;
         }
     }
 

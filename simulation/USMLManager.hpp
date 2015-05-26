@@ -62,6 +62,6 @@ private:
     bool mContinue;
     bool mRunning;
 
-    const double maxTime = 60; //60s * 1500m/s is 90km straight-line. Should be fine for now.
+    const double maxTime = 20; //20s * 1500m/s is 30km straight-line. Should be fine for now.
     const double timeStep = 0.1;
 };
