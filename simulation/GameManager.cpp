@@ -21,6 +21,7 @@
 #include "server/SubServer.hpp"
 #include "network/UpdateMessage.hpp"
 #include "network/SubSocket.hpp"
+#include "simulation/USMLManager.hpp"
 #include "simulation/Vessel.hpp"
 
 std::shared_ptr<GameManager> GameManager::gameInst = NULL;
@@ -80,6 +81,13 @@ void GameManager::setSocket(std::shared_ptr<SubSocket> socket)
     mSocket = socket;
 }
 
+void GameManager::startGame()
+{
+    subDebug << "Starting game" << std::endl;
+    //Kick off the USML thread.
+    USMLManager::getInstance()->start(getCurrentVesselID());
+}
+
 void GameManager::tick(float dt)
 {
     auto localUpdateMessages = Ocean::getOcean()->tick(dt);
@@ -108,4 +116,21 @@ void GameManager::tick(float dt)
         }
 
     }
+}
+
+void GameManager::endGame()
+{
+    using seconds = std::chrono::duration<float>;
+
+    subDebug << "Ending game" << std::endl;
+
+    //Stop the USML thread and record how much time it took.
+    auto startTime = std::chrono::high_resolution_clock::now();
+    USMLManager::getInstance()->stop();
+    auto duration = std::chrono::high_resolution_clock::now() - startTime;
+
+    subDebug << "USML thread join took " << seconds(duration).count() << "sec" << std::endl;
+
+    //Clear the ocean.
+    Ocean::getOcean()->localResetOcean();
 }

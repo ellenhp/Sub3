@@ -69,7 +69,7 @@ void Ocean::localResetOcean()
 {
     mAccessMutex.lock();
     mVessels.clear();
-    mAccessMutex.lock();
+    mAccessMutex.unlock();
 }
 
 void Ocean::localSpawnVessel(VesselID id, std::shared_ptr<Vessel> vessel)

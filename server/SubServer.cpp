@@ -74,7 +74,7 @@ uint16_t SubServer::getPort()
 
 void SubServer::serverLoop()
 {
-    using seconds = std::chrono::duration<float, std::ratio<1, 1>>;
+    using seconds = std::chrono::duration<float>;
 
     auto lastUpdate = std::chrono::steady_clock::now();
 

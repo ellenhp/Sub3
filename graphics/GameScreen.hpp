@@ -29,12 +29,15 @@ class GameScreen : public SubScreen
 {
 public:
     GameScreen(SubWindow* subWindow);
+    ~GameScreen();
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
     void updateScreen(float dt);
 
 private:
     void fillWindow();
+
+    void quitHandler();
 
     SubWindow* mSubWindow;
 

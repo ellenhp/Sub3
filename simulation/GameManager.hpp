@@ -52,7 +52,9 @@ public:
     void setPlayer(PlayerID player);
     void setCurrentVessel(VesselID vessel);
 
+    void startGame();
     void tick(float dt);
+    void endGame();
 
 private:
     static std::shared_ptr<GameManager> gameInst;

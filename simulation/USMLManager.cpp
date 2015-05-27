@@ -117,9 +117,23 @@ void USMLManager::loadDataAround(Position pos)
 //Starts a thread that will continuously calculate propagation loss.
 void USMLManager::start(VesselID listener, double range)
 {
+    BOOST_ASSERT_MSG(!getRunning(), "Fatal: USML thread already running");
     mContinue = true;
-    BOOST_ASSERT_MSG(!mRunning, "Fatal: USML thread already running");
     mUsmlThread = std::thread(&USMLManager::usmlLoop, this);
+}
+
+//Starts a thread that will continuously calculate propagation loss.
+void USMLManager::stop()
+{
+    BOOST_ASSERT_MSG(getRunning(), "Fatal: USML thread not running");
+
+    //Let the thread know it needs to stop.
+    mContinueMutex.lock();
+    mContinue = false;
+    mContinueMutex.unlock();
+
+    //Join the thread (dubious whether this is necessary, TODO).
+    mUsmlThread.join();
 }
 
 //I'm not sure if accessing a bool is atomic so I'm being safe.
@@ -131,8 +145,26 @@ bool USMLManager::getContinuing()
     return continuing;
 }
 
+void USMLManager::setRunning(bool running)
+{
+    //We're using the same mutex for mContinue and mRunning.
+    mContinueMutex.lock();
+    mRunning = running;
+    mContinueMutex.unlock();
+}
+
+bool USMLManager::getRunning()
+{
+    bool running;
+    mContinueMutex.lock();
+    running = mRunning;
+    mContinueMutex.unlock();
+    return running;
+}
+
 void USMLManager::usmlLoop()
 {
+    setRunning(true);
     while (getContinuing())
     {
         //Eventually do something more refined than this.
@@ -159,6 +191,7 @@ void USMLManager::usmlLoop()
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
+    setRunning(false);
 }
 
 //This method takes a while. To be called from usmlLoop() only.

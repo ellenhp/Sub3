@@ -19,9 +19,9 @@
 #include "GameScreen.hpp"
 
 #include "Sub3.hpp"
+#include "graphics/MainMenu.hpp"
 #include "graphics/SubWindow.hpp"
 #include "simulation/GameManager.hpp"
-#include "simulation/USMLManager.hpp"
 
 #include <SFGUI/Widgets.hpp>
 
@@ -32,6 +32,15 @@ GameScreen::GameScreen(SubWindow* subWindow) :
 {
 }
 
+GameScreen::~GameScreen()
+{
+    auto gameMgr = GameManager::getCurrent().lock();
+    BOOST_ASSERT_MSG(gameMgr, "Fatal: GameManager doesn't exist in GameScreen.cleanupScreen()");
+
+    //Ends the game (internally tells the USML thread to terminate then joins it).
+    gameMgr->endGame();
+}
+
 void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 {
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -40,8 +49,8 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
     auto gameMgr = GameManager::getCurrent().lock();
     BOOST_ASSERT_MSG(gameMgr, "Fatal: GameManager doesn't exist in GameScreen.setupScreen()");
 
-    //TODO: find a better place to do this.
-    USMLManager::getInstance()->start(gameMgr->getCurrentVesselID());
+    //Start the game (internally kicks off the USML thread).
+    gameMgr->startGame();
 
     //Get the current vessel's UI.
     auto currentVessel = gameMgr->getCurrentVessel();
@@ -58,10 +67,16 @@ void GameScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> arg
 
     //Toolbar widgets.
     auto versionLabel = sfg::Label::Create(versionStream.str());
+    auto filler = sfg::Label::Create(" ");
     auto quitButton = sfg::Button::Create("Quit to Main Menu");
 
+    quitButton->GetSignal(sfg::Button::OnLeftClick).Connect(
+        std::bind(&GameScreen::quitHandler, this)
+    );
+
     //Pack the toolbar widgets.
-    bottomBox->Pack(versionLabel);
+    bottomBox->Pack(versionLabel, false, false);
+    bottomBox->Pack(filler);
     bottomBox->Pack(quitButton, false, false);
 
     //Pack the toolbar.
@@ -104,4 +119,9 @@ void GameScreen::fillWindow()
     float winY = 0.1f * mSubWindow->getHeight();
     mGameWindow->SetAllocation({winX, winY, width, height});
 
+}
+
+void GameScreen::quitHandler()
+{
+    mSubWindow->switchToScreen<MainMenu>();
 }

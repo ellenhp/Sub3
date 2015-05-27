@@ -43,6 +43,12 @@ public:
     //Starts a thread that will continuously calculate propagation loss.
     void start(VesselID listener, double range = 100000);
 
+    //Checks to see if the USML thread is running.
+    bool getRunning();
+
+    //Stops the thread and waits for it to end (blocks for a short while).
+    void stop();
+
 private:
     USMLManager();
 
@@ -50,6 +56,7 @@ private:
     void usmlCalculate(VesselID emitter, std::vector<VesselID> listeners);
 
     bool getContinuing();
+    void setRunning(bool running);
 
     static USMLManager* inst;
 
