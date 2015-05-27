@@ -20,6 +20,8 @@
 
 #include "simulation/Vessel.hpp"
 
+#include "graphics/widgets/WaterfallDisplay.hpp"
+
 #include <SFGUI/Widgets.hpp>
 
 //A basic surface vessel. It can move, but not much else.
@@ -57,6 +59,8 @@ private:
     sfg::SpinButton::Ptr mPitch;
 
     sfg::Label::Ptr mLocation;
+
+    WaterfallDisplay::Ptr mWaterfall;
 
     std::weak_ptr<BasicSubmarine> mVessel;
 };

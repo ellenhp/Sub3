@@ -18,7 +18,10 @@
 
 #include "BasicSubmarine.hpp"
 
+#include "simulation/BroadbandState.hpp"
+
 #include <sstream>
+#include <iomanip>
 
 //IMPORTANT: This lets Boost serialize our spawn message.
 REGISTER_PACKETS(BasicSubmarine, "BasicSubmarine")
@@ -81,7 +84,8 @@ BasicSubmarine::UI::~UI()
 
 std::shared_ptr<sfg::Widget> BasicSubmarine::UI::setupUI()
 {
-    auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+    auto navigationBox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+
     auto controlsBox = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
 
     auto labels = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -105,14 +109,22 @@ std::shared_ptr<sfg::Widget> BasicSubmarine::UI::setupUI()
     controlsBox->Pack(labels);
     controlsBox->Pack(spinBoxes);
 
-    box->Pack(controlsBox, false, false);
-    box->SetSpacing(20.f);
+    navigationBox->Pack(controlsBox, false, false);
+    navigationBox->SetSpacing(20.f);
 
     mLocation = sfg::Label::Create("Location here");
 
-    box->Pack(mLocation);
+    auto locationAndSonar = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+    locationAndSonar->Pack(mLocation, false, false);
 
-    return box;
+    mWaterfall = WaterfallDisplay::Create();
+    locationAndSonar->Pack(mWaterfall);
+
+    navigationBox->Pack(locationAndSonar);
+
+    mWaterfall->RequestResize();
+
+    return navigationBox;
 }
 
 void BasicSubmarine::UI::updateUI(double dt)
@@ -127,9 +139,9 @@ void BasicSubmarine::UI::updateUI(double dt)
         double alt = vesselPosition.getAltitude();
 
         std::stringstream locationText;
-        locationText << "Location: " << std::endl;
-        locationText << lat << " deg" << std::endl << lng << " deg" << std::endl;
-        locationText << "Depth: " << alt << " meters";
+        locationText << "Position and depth: " << std::endl;
+        locationText << std::setprecision(6) << std::fixed << lat << " deg" << std::endl << std::setprecision(6) << std::fixed << lng << " deg" << std::endl;
+        locationText << "Depth: " << std::setprecision(2) << alt << " m";
 
         mLocation->SetText(locationText.str());
 
@@ -141,5 +153,10 @@ void BasicSubmarine::UI::updateUI(double dt)
         vessel->setVelocity(mVelocity->GetValue() * 0.514444444); //Convert to m/s.
 
         ocean->unlockAccess();
+
+        BroadbandState state(0.3f, 0.3f, 5.0f);
+        state.pushContact(BroadbandState::BroadbandContact(0, 0.4f, 10.0f));
+
+        mWaterfall->SetState(state);
     }
 }

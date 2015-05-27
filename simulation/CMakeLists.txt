@@ -1,5 +1,6 @@
 set(SOURCE
    ${SOURCE}
+   ${CMAKE_CURRENT_SOURCE_DIR}/BroadbandState.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/GameManager.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/Ocean.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/PlayerID.cpp
@@ -12,6 +13,7 @@ set(SOURCE
 )
 set(HEADERS
    ${HEADERS}
+   ${CMAKE_CURRENT_SOURCE_DIR}/BroadbandState.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/GameManager.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/Ocean.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/PlayerID.hpp
