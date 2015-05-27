@@ -178,7 +178,7 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
     Position newPos;
     newPos.setLatitude(0);
     newPos.setLongitude(0);
-    newPos.setAltitude(-10);
+    newPos.setAltitude(-100);
     VesselState newState(newPos, 0, 0, 0);
 
     //Create a message for spawning the new vessel.

@@ -29,7 +29,6 @@
 
 #include <usml/waveq3d/eigenray.h>
 
-typedef std::map<VesselID, std::vector<usml::waveq3d::eigenray>> VesselEigenrayMap;
 
 //This class manages all interaction with USML.
 class USMLManager
@@ -51,6 +50,9 @@ public:
     //Stops the thread and waits for it to end (blocks for a short while).
     void stop();
 
+    //Gets a copy of the eigenray map.
+    std::map<VesselID, usml::waveq3d::eigenray> getEigenrayMap();
+
 private:
     USMLManager();
 
@@ -68,8 +70,8 @@ private:
     std::thread mUsmlThread;
     std::mutex mContinueMutex;
 
-    std::map<VesselID, VesselEigenrayMap> mAllEigenrays;
-    std::mutex mAllEigenrayMutex;
+    std::map<VesselID, usml::waveq3d::eigenray> mEigenrayMap;
+    std::mutex mEigenrayMutex;
 
     bool mContinue;
     bool mRunning;

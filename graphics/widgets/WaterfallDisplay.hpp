@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <SFGUI/Image.hpp>
 #include <SFGUI/RenderQueue.hpp>
 
 #include <SFML/Graphics/Color.hpp>

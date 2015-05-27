@@ -31,8 +31,9 @@ WaterfallDisplay::WaterfallDisplay(float timeResolution, float secondsOfHistory,
     mStateSet(false), mSecondsSinceHistoryUpdate(0.f), mTimeResolution(timeResolution), mBuckets(0), mColor(color), mImageBuffer(NULL)
 {
     mRows = secondsOfHistory / timeResolution;
-
-    SetKeepAspect(false);
+    sf::Image img;
+    img.create(1, 1);
+    SetImage(img);
 }
 
 WaterfallDisplay::~WaterfallDisplay()
@@ -139,7 +140,8 @@ void WaterfallDisplay::GenerateImage()
             //If we have data on this row.
             if (row < mHistory.size())
             {
-                float intensity = mHistory[row][bucket];
+                auto& rowDeque = mHistory.at(row);
+                float intensity = rowDeque.at(bucket);
                 //Fill in the data.
                 mImageBuffer[pixelOffset + 0] = (sf::Uint8)(mColor.r * intensity);
                 mImageBuffer[pixelOffset + 1] = (sf::Uint8)(mColor.g * intensity);
@@ -153,6 +155,7 @@ void WaterfallDisplay::GenerateImage()
                 mImageBuffer[pixelOffset + 2] = 0;
                 mImageBuffer[pixelOffset + 3] = 255;
             }
+            BOOST_ASSERT_MSG(pixelIndex < numPixels, "Fatal: GenerateImage mess-up");
         }
     }
 }

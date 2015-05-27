@@ -1,3 +1,21 @@
+/*
+ * Sub^3 is a free software submarine simulator focused on realism.
+ * Copyright (C) 2015 Nolan Poe
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "ResizableImage.hpp"
 
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -28,16 +46,6 @@ void ResizableImage::SetImage(const sf::Image& image)
 {
     mOriginalImage = image;
     Image::SetImage(mOriginalImage);
-}
-
-const sf::Image& ResizableImage::GetImage() const
-{
-    return mOriginalImage;
-}
-
-const sf::Image& ResizableImage::GetResizedImage() const
-{
-    return Image::GetImage();
 }
 
 void ResizableImage::Resize(const unsigned int sizeX, const unsigned int sizeY)
@@ -72,23 +80,7 @@ void ResizableImage::Resize(const sf::Vector2u& customSize)
     sf::Sprite tempSprite;
     tempSprite.setTexture(tempTexture, true);
 
-    if(mKeepAspect)
-    {
-        // Use same scale for both sides of the sprite
-        float lowerScale = std::min(scaleX, scaleY);
-
-        tempSprite.scale(lowerScale, lowerScale);
-
-        //Set offsets.
-        float offsetX = (desiredX - (originalX * (lowerScale))) / 2;
-        float offsetY = (desiredY - (originalY * (lowerScale))) / 2;
-
-        tempSprite.move(offsetX, offsetY);
-    }
-    else
-    {
-        tempSprite.scale(scaleX, scaleY);
-    }
+    tempSprite.scale(scaleX, scaleY);
 
     // Transformations on Sprite are set, so we can pre-render the sprite on
     //  a new texture with a transparent background
@@ -100,14 +92,4 @@ void ResizableImage::Resize(const sf::Vector2u& customSize)
     tempRenderTexture.display();
 
     Image::SetImage(tempRenderTexture.getTexture().copyToImage());
-}
-
-void ResizableImage::SetKeepAspect(bool value)
-{
-    mKeepAspect = value;
-}
-
-bool ResizableImage::GetKeepAspect() const
-{
-    return mKeepAspect;
 }

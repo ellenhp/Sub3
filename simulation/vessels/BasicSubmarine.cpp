@@ -19,6 +19,7 @@
 #include "BasicSubmarine.hpp"
 
 #include "simulation/BroadbandState.hpp"
+#include "simulation/USMLManager.hpp"
 
 #include <sstream>
 #include <iomanip>
@@ -155,7 +156,31 @@ void BasicSubmarine::UI::updateUI(double dt)
         ocean->unlockAccess();
 
         BroadbandState state(0.3f, 0.3f, 5.0f);
-        state.pushContact(BroadbandState::BroadbandContact(0, 0.4f, 10.0f));
+
+        auto eigenrayMap = USMLManager::getInstance()->getEigenrayMap();
+
+        //Iterate through all contacts we can hear.
+        for (auto& contactKV : eigenrayMap)
+        {
+            //If the azimuth angle is NaN, that means that there were no eigenrays for this contact.
+            if (!isnan(contactKV.second.source_az))
+            {
+                //Average the intensities across all frequencies.
+                //TODO: don't weight them all the same, and figure out what the numbers USML gives us even mean.
+                double intensitySum = 0;
+                for (auto intensity : contactKV.second.intensity)
+                {
+                    if (intensity > 299.9999f)
+                        continue;
+                    intensitySum += intensity;
+                }
+                double intensityAverage = intensitySum / contactKV.second.intensity.size();
+
+                float adjustedIntensity = (float)(intensityAverage / 300);
+
+                state.pushContact(BroadbandState::BroadbandContact((float)contactKV.second.source_az, adjustedIntensity, 5.0f));
+            }
+        }
 
         mWaterfall->SetState(state);
     }

@@ -177,6 +177,14 @@ void USMLManager::stop()
     mUsmlThread.join();
 }
 
+std::map<VesselID, usml::waveq3d::eigenray> USMLManager::getEigenrayMap()
+{
+    mEigenrayMutex.lock();
+    auto copy = mEigenrayMap;
+    mEigenrayMutex.unlock();
+    return copy;
+}
+
 //I'm not sure if accessing a bool is atomic so I'm being safe.
 bool USMLManager::getContinuing()
 {
@@ -289,16 +297,13 @@ void USMLManager::usmlCalculate(VesselID emitter, std::vector<VesselID> listener
 
     loss.sum_eigenrays();
 
-    //subDebug << "done calculating eigenrays" << std::endl;
+    mEigenrayMutex.lock();
+    mEigenrayMap.clear();
     for (int listenerIndex = 0; listenerIndex < listenerPositions.size(); listenerIndex++)
     {
-        //subDebug << "total for target " << listenerIndex << std::endl;
         auto totalEigenray = loss.total(listenerIndex, 0);
-        auto intensities = totalEigenray->intensity;
-        for (int freqIndex = 0; freqIndex < intensities.size(); freqIndex++)
-        {
-            //subDebug << FREQ_AXIS[freqIndex] << "Hz: " << intensities[freqIndex] << "dB" << std::endl;
-        }
+        BOOST_ASSERT_MSG(totalEigenray != NULL, "Fatal: Eigenray is null!");
+        mEigenrayMap[listeners[listenerIndex]] = *totalEigenray;
     }
-
+    mEigenrayMutex.unlock();
 }
