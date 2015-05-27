@@ -202,8 +202,8 @@ void LoadingScreen::doLoading()
 
     //Let the USMLManager do the loading.
     auto pos = gameManager->getCurrentVessel()->getState().getLocation();
-    USMLManager::getInstance()->loadDataAround(pos);
-    
+    USMLManager::getInstance()->ensureDataAround(pos, true);
+
     subDebug << "Done loading Oceanographic Data..." << std::endl;
 
     mLoadingMutex.lock();

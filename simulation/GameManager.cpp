@@ -97,6 +97,11 @@ void GameManager::tick(float dt)
         updateMessage->execute();
     }
 
+    //Ensure the area around the player is loaded.
+    auto currentPos = getCurrentVessel()->getState().getLocation();
+    USMLManager::getInstance()->ensureDataAround(currentPos, false);
+
+    //Conditionally update the server on our state.
     auto timeSinceUpdate = std::chrono::steady_clock::now() - mLastUpdate;
     if (isInitialized() && timeSinceUpdate > network_interval(1))
     {
@@ -114,7 +119,6 @@ void GameManager::tick(float dt)
             BOOST_ASSERT_MSG(*mSocket >> message, "Fatal: Failed to load message");
             message->execute();
         }
-
     }
 }
 

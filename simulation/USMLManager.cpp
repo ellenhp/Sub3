@@ -31,6 +31,7 @@
 #include <boost/assert.hpp>
 
 #include <chrono>
+#include <future>
 
 using usml::netcdf::netcdf_woa;
 using usml::netcdf::netcdf_bathy;
@@ -41,7 +42,7 @@ using namespace usml::ocean;
 USMLManager* USMLManager::inst = NULL;
 
 USMLManager::USMLManager() :
-    mRunning(false)
+    mRunning(false), mLoadedData(false)
 {
 }
 
@@ -57,20 +58,12 @@ USMLManager* USMLManager::getInstance()
 //Loads oceanographic data around pos.
 void USMLManager::loadDataAround(Position pos)
 {
-    const double distance = 1000000; //1000km on every side should be plenty.
-
     //Calculate the amount of data to load.
-    Position northLimit(pos, distance, 0);
-    Position southLimit(pos, distance, 180);
+    Position northLimit(pos, loadDistance, 0);
+    Position southLimit(pos, loadDistance, 180);
 
-    Position northeastLimit(northLimit, distance, 90);
-    Position southwestLimit(southLimit, distance, 270);
-
-    // const double lat1 = northwestLimit.getLatitude();
-    // const double lng1 = northwestLimit.getLongitude();
-    //
-    // const double lat2 = southeastLimit.getLatitude();
-    // const double lng2 = southeastLimit.getLongitude();
+    Position northeastLimit(northLimit, loadDistance, 90);
+    Position southwestLimit(southLimit, loadDistance, 270);
 
     const double lat1 = southwestLimit.getLatitude();
     const double lng1 = southwestLimit.getLongitude();
@@ -94,7 +87,6 @@ void USMLManager::loadDataAround(Position pos)
 
     subDebug << "Loaded temp and salinity" << std::endl;
 
-
     //Compute sound speed.
     profile_model* profile = new profile_lock(new profile_grid<double,3>(
         data_grid_mackenzie::construct(temperature, salinity)));
@@ -112,12 +104,61 @@ void USMLManager::loadDataAround(Position pos)
     //Updated the ocean_shared reference.
     ocean_shared::reference ocean(new ocean_model(surface, bottom, profile));
     ocean_shared::update(ocean);
+
+    mOceanicDataMutex.lock();
+    mLoadedData = true;
+    mDataCenter = pos;
+    mOceanicDataMutex.unlock();
+}
+
+void USMLManager::ensureDataAround(Position pos, bool waitForLoading)
+{
+    bool loadedData;
+    Position dataCenter;
+
+    //Copy stuff into local variables.
+    mOceanicDataMutex.lock();
+    loadedData = mLoadedData;
+    dataCenter = mDataCenter;
+    mOceanicDataMutex.unlock();
+
+    if (!loadedData)
+    {
+        subDebug << "Haven't loaded data, doing it synchronously." << std::endl;
+        waitForLoading = true;
+    }
+    else
+    {
+        //Find the distance from the current position to the previous center;
+        double distance = pos.distanceTo(dataCenter);
+
+        //If data is already loaded, don't bother doing anything.
+        if (distance < reloadDistance)
+        {
+            return;
+        }
+
+        if (distance > minDistance)
+        {
+            //TODO test this or see if it's necessary.
+            subDebug << "Loaded data too far away, loading it synchronously." << std::endl;
+            waitForLoading = true;
+        }
+    }
+
+    auto loadingFuture = std::async(std::launch::async, &USMLManager::loadDataAround, this, pos);
+    if (waitForLoading)
+    {
+        //get() blocks until loadDataAround(pos) is done.
+        loadingFuture.get();
+    }
 }
 
 //Starts a thread that will continuously calculate propagation loss.
 void USMLManager::start(VesselID listener, double range)
 {
     BOOST_ASSERT_MSG(!getRunning(), "Fatal: USML thread already running");
+    BOOST_ASSERT_MSG(mLoadedData, "Fatal: Haven't loaded oceanic data yet");
     mContinue = true;
     mUsmlThread = std::thread(&USMLManager::usmlLoop, this);
 }

@@ -38,7 +38,9 @@ public:
     //This is a singleton.
     static USMLManager* getInstance();
 
-    void loadDataAround(Position pos);
+    //Ensures oceanic data is loaded near the specified position.
+    //This blocks until loading is finished if waitForLoading is true or if data has not been loaded before in this area.
+    void ensureDataAround(Position pos, bool waitForLoading);
 
     //Starts a thread that will continuously calculate propagation loss.
     void start(VesselID listener, double range = 100000);
@@ -51,6 +53,9 @@ public:
 
 private:
     USMLManager();
+
+    //Loads oceanic data around the specified Position.
+    void loadDataAround(Position pos);
 
     void usmlLoop();
     void usmlCalculate(VesselID emitter, std::vector<VesselID> listeners);
@@ -69,6 +74,18 @@ private:
     bool mContinue;
     bool mRunning;
 
+    //Have we loaded oceanic data yet?
+    bool mLoadedData;
+
+    //The center of the area we loaded oceanic data for.
+    Position mDataCenter;
+
+    //Mutex for mLoadedData and mDataCenter.
+    std::mutex mOceanicDataMutex;
+
     const double maxTime = 20; //20s * 1500m/s is 30km straight-line. Should be fine for now.
     const double timeStep = 0.1;
+    const double loadDistance = 1000000; //1000km should be plenty.
+    const double reloadDistance = 200000; //1000km - 200km = 800km nominal minimum distance, which is fine.
+    const double minDistance = 5000000; //100km - 500km = 500km absolute minimum, which is fine.
 };
