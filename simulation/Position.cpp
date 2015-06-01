@@ -92,7 +92,9 @@ void Position::setAltitude(double alt)
 
 double Position::distanceTo(Position other)
 {
-    return gc_range(other);
+    double range = gc_range(other);
+    double altDifference = getAltitude() - other.getAltitude();
+    return sqrt(range * range + altDifference * altDifference);
 }
 
 double Position::bearingTo(Position other)

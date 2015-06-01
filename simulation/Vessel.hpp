@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "physics/CapsuleShape.hpp"
 #include "simulation/VesselState.hpp"
 #include "network/SpawnMessage.hpp"
 
@@ -44,6 +45,9 @@ public:
     //Get the UI for allowing a player to control the vessel passed in.
     //Internally, the UI should create a weak_ptr to the vessel.
     virtual std::shared_ptr<VesselUI> constructUI(std::shared_ptr<Vessel> vessel) = 0;
+
+    //Get the capsule that currently bounds this vessel.
+    virtual CapsuleShape getBoundingCapsule() const = 0;
 
 protected:
     VesselState mState;

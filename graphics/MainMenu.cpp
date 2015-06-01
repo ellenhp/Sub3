@@ -42,7 +42,6 @@ void MainMenu::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 
     //Main menu buttons.
     auto playButton = sfg::Button::Create("Play Game");
-    auto optionsButton = sfg::Button::Create("Change Preferences");
     auto licenseButton = sfg::Button::Create("View License");
     auto quitButton = sfg::Button::Create("Quit Game");
 
@@ -59,7 +58,6 @@ void MainMenu::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 
     //Layout the buttons.
     box->Pack(playButton);
-    box->Pack(optionsButton);
     box->Pack(licenseButton);
     box->Pack(quitButton);
     box->SetSpacing(10);
@@ -162,6 +160,8 @@ void MainMenu::playCancelHandler()
 {
     mDesktop->Remove(mConnectWindow);
     mConnectWindow = NULL;
+    mIpEntry = NULL;
+    mPortEntry = NULL;
 }
 
 void MainMenu::centerWindow()

@@ -16,24 +16,28 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string>
-#include <memory>
+#include "CartesianPosition.hpp"
 
-#include <SFML/Window/VideoMode.hpp>
-
-#include "Sub3.hpp"
-#include "graphics/SubWindow.hpp"
-
-int main(int argc, char** argv)
+CartesianPosition::CartesianPosition() :
+    CartesianPosition(Position())
 {
-    std::cout << "Sub^3 version " << subVersionMajor << "." << subVersionMinor << std::endl;
-    if (subCommitHash.size() > 0)
-    {
-        std::cout << "Sub^3 commit hash: " << subCommitHash << std::endl;
-    }
+}
 
-    SubWindow subWindow(sf::VideoMode(800, 600));
-    subWindow.run();
+CartesianPosition::CartesianPosition(Position pos) :
+    sf::Vector3<double>(
+        pos.getLongitude() * cos(pos.getLatitude() * M_PI / 180.0) * 6371000 * M_PI / 180.0,
+        pos.getLatitude() * 6371000 * M_PI / 180.0,
+        pos.getAltitude()
+    )
+{
+}
 
-    return 0;
+double CartesianPosition::distanceTo(CartesianPosition other)
+{
+    //Simple pythagorean theorem calculation.
+    double deltaX = other.x - x;
+    double deltaY = other.y - y;
+    double deltaZ = other.z - z;
+
+    return sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 }

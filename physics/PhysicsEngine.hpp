@@ -16,24 +16,29 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string>
-#include <memory>
+#pragma once
 
-#include <SFML/Window/VideoMode.hpp>
+#include <map>
+#include <vector>
 
-#include "Sub3.hpp"
-#include "graphics/SubWindow.hpp"
+#include "simulation/VesselID.hpp"
+#include "simulation/VesselState.hpp"
 
-int main(int argc, char** argv)
+//This class lerps all Vessels to their new positions internally and detects collisions.
+class PhysicsEngine
 {
-    std::cout << "Sub^3 version " << subVersionMajor << "." << subVersionMinor << std::endl;
-    if (subCommitHash.size() > 0)
+public:
+    struct Collision
     {
-        std::cout << "Sub^3 commit hash: " << subCommitHash << std::endl;
-    }
+        VesselID first;
+        VesselID second;
+        double energy;
+    };
 
-    SubWindow subWindow(sf::VideoMode(800, 600));
-    subWindow.run();
+    //Grabs the lastest positions from Ocean and checks for collisions.
+    std::vector<Collision> tick(float dt);
 
-    return 0;
-}
+private:
+    
+    const double mMaxVesselRadius = 300; //Big enough for a supercarrier, should be fine.
+};

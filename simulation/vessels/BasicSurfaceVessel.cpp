@@ -61,6 +61,11 @@ void BasicSurfaceVessel::setVelocity(double velocity)
     mState.setVelocity(velocity);
 }
 
+CapsuleShape BasicSurfaceVessel::getBoundingCapsule() const
+{
+    return CapsuleShape(mState, mLength, mBeam);
+}
+
 BasicSurfaceVessel::UI::UI(std::weak_ptr<BasicSurfaceVessel> vessel) :
     mHeading(NULL), mVelocity(NULL), mLocation(NULL), mVessel(vessel)
 {

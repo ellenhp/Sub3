@@ -42,6 +42,13 @@ public:
 
     //Get a UI for this vessel.
     virtual std::shared_ptr<Vessel::VesselUI> constructUI(std::shared_ptr<Vessel> vessel);
+
+    virtual CapsuleShape getBoundingCapsule() const;
+
+private:
+    const double mLength = 100;
+    const double mBeam = 14;
+
 };
 
 class BasicSubmarine::UI : public Vessel::VesselUI

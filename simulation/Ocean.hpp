@@ -71,6 +71,10 @@ public:
     Month getMonth() const;
     bool getHasVessel(VesselID id) const;
     VesselState getState(VesselID id) const;
+    std::shared_ptr<const Vessel> getVessel(VesselID id) const;
+
+    //This is used by PhysicsEngine
+    std::map<VesselID, VesselState> getAllVesselStates();
 
     //Get all vessel ID's within d meters.
     std::vector<VesselID> getNearestVesselIDs(double d, std::shared_ptr<const Vessel> target = NULL) const;

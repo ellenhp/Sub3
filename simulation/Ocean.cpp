@@ -65,6 +65,16 @@ std::vector<std::shared_ptr<Message>> Ocean::getInitiationMessages() const
     return messages;
 }
 
+std::map<VesselID, VesselState> Ocean::getAllVesselStates()
+{
+    std::map<VesselID, VesselState> vesselStates;
+    for (auto& vesselKV : mVessels)
+    {
+        vesselStates[vesselKV.first] = vesselKV.second->getState();
+    }
+    return vesselStates;
+}
+
 void Ocean::localResetOcean()
 {
     mAccessMutex.lock();
@@ -118,6 +128,12 @@ VesselState Ocean::getState(VesselID id) const
 {
     BOOST_ASSERT_MSG(getHasVessel(id), "Fatal: Ocean doesn't contain vessel to get state of");
     return mVessels.at(id)->getState();
+}
+
+std::shared_ptr<const Vessel> Ocean::getVessel(VesselID id) const
+{
+    BOOST_ASSERT_MSG(getHasVessel(id), "Fatal: Ocean doesn't contain vessel to get");
+    return mVessels.at(id);
 }
 
 std::vector<VesselID> Ocean::getNearestVesselIDs(double d, std::shared_ptr<const Vessel> target) const

@@ -25,6 +25,7 @@ configure_file(
 add_subdirectory("${PROJECT_SOURCE_DIR}/debug")
 add_subdirectory("${PROJECT_SOURCE_DIR}/graphics")
 add_subdirectory("${PROJECT_SOURCE_DIR}/graphics/widgets")
+add_subdirectory("${PROJECT_SOURCE_DIR}/physics")
 add_subdirectory("${PROJECT_SOURCE_DIR}/network")
 add_subdirectory("${PROJECT_SOURCE_DIR}/server")
 add_subdirectory("${PROJECT_SOURCE_DIR}/simulation")

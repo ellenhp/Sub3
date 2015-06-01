@@ -16,24 +16,19 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string>
-#include <memory>
+#pragma once
 
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/System/Vector3.hpp>
 
-#include "Sub3.hpp"
-#include "graphics/SubWindow.hpp"
+#include "simulation/Position.hpp"
 
-int main(int argc, char** argv)
+//This class represents a position in cartesian coordinates.
+//Which is useful for geometry intersection calculations.
+class CartesianPosition : public sf::Vector3<double>
 {
-    std::cout << "Sub^3 version " << subVersionMajor << "." << subVersionMinor << std::endl;
-    if (subCommitHash.size() > 0)
-    {
-        std::cout << "Sub^3 commit hash: " << subCommitHash << std::endl;
-    }
+public:
+    CartesianPosition();
+    CartesianPosition(Position pos);
 
-    SubWindow subWindow(sf::VideoMode(800, 600));
-    subWindow.run();
-
-    return 0;
-}
+    double distanceTo(CartesianPosition other);
+};

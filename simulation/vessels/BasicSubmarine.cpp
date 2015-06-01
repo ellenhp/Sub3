@@ -71,6 +71,11 @@ void BasicSubmarine::setPitch(double pitch)
     mState.setPitch(pitch);
 }
 
+CapsuleShape BasicSubmarine::getBoundingCapsule() const
+{
+    return CapsuleShape(mState, mLength, mBeam);
+}
+
 BasicSubmarine::UI::UI(std::weak_ptr<BasicSubmarine> vessel) :
     mHeading(NULL), mVelocity(NULL), mLocation(NULL), mVessel(vessel)
 {

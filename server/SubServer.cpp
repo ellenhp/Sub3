@@ -19,6 +19,7 @@
 #include "SubServer.hpp"
 
 #include "Sub3.hpp"
+#include "physics/PhysicsEngine.hpp"
 #include "network/SetPlayerIDMessage.hpp"
 #include "network/SetCurrentVesselMessage.hpp"
 #include "simulation/Ocean.hpp"
@@ -81,6 +82,8 @@ void SubServer::serverLoop()
     //Time to wake up after sleeping.
     auto end_time = std::chrono::steady_clock::now() + network_interval(1);
 
+    PhysicsEngine physicsEngine;
+
     mKeepRunningMutex.lock();
     while (mKeepRunning)
     {
@@ -132,11 +135,16 @@ void SubServer::serverLoop()
 
         auto updateMessages = Ocean::getOcean()->tick(seconds(duration).count());
 
+        //Actually update the ocean.
         for (auto message : updateMessages)
         {
             message->execute();
         }
 
+        //Run physics calculations
+        physicsEngine.tick(seconds(duration).count());
+
+        //Update the clients
         for (auto& clientKV : mClients)
         {
             for (auto message : updateMessages)
@@ -208,10 +216,6 @@ void SubServer::kickPlayer(PlayerID player)
     BOOST_ASSERT_MSG(mClients.count(player) > 0, "Fatal: Player doesn't exist or disconnected.");
     //TODO: maybe send a disconnect message.
     mClients.erase(player);
-
-    //This causes a segfault or sometimes a double-free.
-    //TODO: why?
-    //mSendMessageSuccessful.erase(player);
 
     subDebug << "Kicked player: " << player << " for network problems." << std::endl;
 }

@@ -1,0 +1,14 @@
+set(SOURCE
+   ${SOURCE}
+   ${CMAKE_CURRENT_SOURCE_DIR}/CapsuleShape.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/CartesianPosition.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/PhysicsEngine.cpp
+   PARENT_SCOPE
+)
+set(HEADERS
+   ${HEADERS}
+   ${CMAKE_CURRENT_SOURCE_DIR}/CapsuleShape.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/CartesianPosition.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/PhysicsEngine.hpp
+   PARENT_SCOPE
+)
