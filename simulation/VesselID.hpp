@@ -44,9 +44,9 @@ public:
     VesselID(PlayerID player, uint32_t playerVesselID);
     VesselID();
 
-    PlayerID getPlayer();
+    PlayerID getPlayer() const;
 
-    uint32_t getPlayerVesselID();
+    uint32_t getPlayerVesselID() const;
 
     friend bool operator<(const VesselID& left, const VesselID& right);
     friend bool operator>(const VesselID& left, const VesselID& right);

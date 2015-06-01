@@ -42,6 +42,7 @@ public:
     PlayerID getPlayerID();
     VesselID getCurrentVesselID();
     std::shared_ptr<Vessel> getCurrentVessel();
+    bool isAlive();
 
     void setSocket(std::shared_ptr<SubSocket> socket);
 

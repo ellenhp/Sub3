@@ -19,6 +19,9 @@
 #include "DespawnMessage.hpp"
 #include "simulation/Ocean.hpp"
 
+//This is necessary for serialization to work correctly.
+BOOST_CLASS_EXPORT_GUID(DespawnMessage, "DespawnMessage")
+
 DespawnMessage::DespawnMessage()
 {
 }

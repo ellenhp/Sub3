@@ -28,6 +28,7 @@
 #include <SFML/Network/TcpListener.hpp>
 
 #include "simulation/PlayerID.hpp"
+#include "simulation/VesselID.hpp"
 #include "network/SubSocket.hpp"
 
 typedef std::chrono::duration<double, std::ratio<1, 10>> network_interval;
@@ -71,6 +72,7 @@ private:
     void serverLoop();
 
     void spawnVesselForPlayer(PlayerID player);
+    void despawnVessel(VesselID vessel);
 
     bool sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message);
     void kickPlayer(PlayerID player);

@@ -63,14 +63,19 @@ std::vector<PhysicsEngine::Collision> PhysicsEngine::tick(float dt)
         }
     }
 
+    std::vector<PhysicsEngine::Collision> collisions;
+
     //Now do the nearphase collision analysis.
     for (auto& candidate : nearphaseCandidates)
     {
         auto capsule1 = ocean->getVessel(candidate.first)->getBoundingCapsule();
         auto capsule2 = ocean->getVessel(candidate.second)->getBoundingCapsule();
-        capsule1.collidesWith(capsule2);
+
+        if (capsule1.collidesWith(capsule2))
+        {
+            collisions.push_back(PhysicsEngine::Collision(candidate.first, candidate.second));
+        }
     }
 
-    std::vector<PhysicsEngine::Collision> collisions;
     return collisions;
 }

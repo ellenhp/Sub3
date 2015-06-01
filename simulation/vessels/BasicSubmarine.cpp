@@ -176,7 +176,7 @@ void BasicSubmarine::UI::updateUI(double dt)
                 for (auto intensity : contactKV.second.intensity)
                 {
                     if (intensity > 299.9999f)
-                        continue;
+                        continue; //TODO: What causes this?
                     intensitySum += intensity;
                 }
                 double intensityAverage = intensitySum / contactKV.second.intensity.size();
@@ -188,5 +188,9 @@ void BasicSubmarine::UI::updateUI(double dt)
         }
 
         mWaterfall->SetState(state);
+    }
+    else
+    {
+        subDebug << "fixme2" << std::endl;
     }
 }

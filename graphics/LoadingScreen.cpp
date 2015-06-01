@@ -201,6 +201,7 @@ void LoadingScreen::doLoading()
     subDebug << "Loading Oceanographic Data..." << std::endl;
 
     //Let the USMLManager do the loading.
+    BOOST_ASSERT_MSG(gameManager->isAlive(), "Fatal: not alive to load oceanographic data");
     auto pos = gameManager->getCurrentVessel()->getState().getLocation();
     USMLManager::getInstance()->ensureDataAround(pos, true);
 

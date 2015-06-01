@@ -28,12 +28,12 @@ VesselID::VesselID()
     mPlayerVesselID = -1;
 }
 
-PlayerID VesselID::getPlayer()
+PlayerID VesselID::getPlayer() const
 {
     return mPlayer;
 }
 
-uint32_t VesselID::getPlayerVesselID()
+uint32_t VesselID::getPlayerVesselID() const
 {
     return mPlayerVesselID;
 }

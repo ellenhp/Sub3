@@ -1,6 +1,7 @@
 set(SOURCE
    ${SOURCE}
    ${CMAKE_CURRENT_SOURCE_DIR}/Message.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/DespawnMessage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SetPlayerIDMessage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SubSocket.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/UpdateMessage.cpp
@@ -10,6 +11,7 @@ set(SOURCE
 set(HEADERS
    ${HEADERS}
    ${CMAKE_CURRENT_SOURCE_DIR}/Message.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/DespawnMessage.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SetPlayerIDMessage.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SpawnMessage.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/SubSocket.hpp

@@ -35,10 +35,10 @@ class DespawnMessage : public Message
 
 public:
     DespawnMessage();
-    DespwanMessage(VesselID vesselID);
+    DespawnMessage(VesselID vesselID);
 
     void execute();
 
 private:
     VesselID mVesselID;
-}
+};

@@ -32,13 +32,14 @@ public:
     {
         VesselID first;
         VesselID second;
-        double energy;
+        Collision() {}
+        Collision(VesselID first, VesselID second) : first(first), second(second) {}
     };
 
     //Grabs the lastest positions from Ocean and checks for collisions.
     std::vector<Collision> tick(float dt);
 
 private:
-    
+
     const double mMaxVesselRadius = 300; //Big enough for a supercarrier, should be fine.
 };

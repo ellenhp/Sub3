@@ -222,8 +222,19 @@ void USMLManager::usmlLoop()
 
         auto ocean = Ocean::getOcean();
 
-        //Copy all the ID's we want to work with into local variables.
         ocean->lockAccess();
+        bool isAlive = gameManager->isAlive();
+
+        if (!isAlive)
+        {
+            //Immediately unlock.
+            ocean->unlockAccess();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            continue;
+        }
+
+        //Copy all the ID's we want to work with into local variables.
         VesselID currentVessel = gameManager->getCurrentVesselID();
         std::vector<VesselID> nearbyVessels = ocean->getNearestVesselIDs(maxTime * 1500);
         ocean->unlockAccess();

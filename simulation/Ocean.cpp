@@ -103,10 +103,16 @@ void Ocean::localDespawnVessel(VesselID id)
 void Ocean::localUpdateVessel(VesselID id, VesselState state)
 {
     // subDebug << "Ocean: Updating " << id << std::endl;
-    BOOST_ASSERT_MSG(mVessels.count(id), "Fatal: Ocean doesn't contain vessel to be updated");
-    mAccessMutex.lock();
-    mVessels[id]->setState(state);
-    mAccessMutex.unlock();
+    if (!mVessels.count(id))
+    {
+        subDebug << "fixme1"<< std::endl;
+    }
+    else
+    {
+        mAccessMutex.lock();
+        mVessels[id]->setState(state);
+        mAccessMutex.unlock();
+    }
 }
 
 void Ocean::localSetMonth(Ocean::Month month)

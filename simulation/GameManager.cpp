@@ -75,6 +75,11 @@ bool GameManager::isInitialized()
     return mHasSetVessel && mHasSetPlayer;
 }
 
+bool GameManager::isAlive()
+{
+    return Ocean::getOcean()->getHasVessel(mCurrentVessel);
+}
+
 void GameManager::setSocket(std::shared_ptr<SubSocket> socket)
 {
     BOOST_ASSERT_MSG(!mSocket, "Fatal: Socket already set");
@@ -98,8 +103,11 @@ void GameManager::tick(float dt)
     }
 
     //Ensure the area around the player is loaded.
-    auto currentPos = getCurrentVessel()->getState().getLocation();
-    USMLManager::getInstance()->ensureDataAround(currentPos, false);
+    if (Ocean::getOcean()->getHasVessel(mCurrentVessel))
+    {
+        auto currentPos = getCurrentVessel()->getState().getLocation();
+        USMLManager::getInstance()->ensureDataAround(currentPos, false);
+    }
 
     //Conditionally update the server on our state.
     auto timeSinceUpdate = std::chrono::steady_clock::now() - mLastUpdate;
@@ -107,10 +115,16 @@ void GameManager::tick(float dt)
     {
         mLastUpdate = std::chrono::steady_clock::now();
 
-        //Send an update message.
-        VesselState newState = getCurrentVessel()->getState();
-        auto updateMyVessel = std::make_shared<UpdateMessage>(mCurrentVessel, newState);
-        *mSocket << updateMyVessel;
+        //Loop through all the vessels we own.
+        for (auto& vesselKV : Ocean::getOcean()->getAllVesselStates())
+        {
+            if (vesselKV.first.getPlayer() == getPlayerID())
+            {
+                VesselState newState = getCurrentVessel()->getState();
+                auto updateMyVessel = std::make_shared<UpdateMessage>(mCurrentVessel, newState);
+                *mSocket << updateMyVessel;
+            }
+        }
 
         //Execute incoming messages.
         std::shared_ptr<Message> message = NULL;

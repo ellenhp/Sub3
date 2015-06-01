@@ -20,6 +20,7 @@
 
 #include "Sub3.hpp"
 #include "physics/PhysicsEngine.hpp"
+#include "network/DespawnMessage.hpp"
 #include "network/SetPlayerIDMessage.hpp"
 #include "network/SetCurrentVesselMessage.hpp"
 #include "simulation/Ocean.hpp"
@@ -141,9 +142,6 @@ void SubServer::serverLoop()
             message->execute();
         }
 
-        //Run physics calculations
-        physicsEngine.tick(seconds(duration).count());
-
         //Update the clients
         for (auto& clientKV : mClients)
         {
@@ -162,6 +160,15 @@ void SubServer::serverLoop()
                     break;
                 }
             }
+        }
+
+        //Run physics calculations
+        auto collisions = physicsEngine.tick(seconds(duration).count());
+        for (auto& collision : collisions)
+        {
+            //It's a harsh ocean out there.
+            despawnVessel(collision.first);
+            despawnVessel(collision.second);
         }
 
         //Sleep for a bit.
@@ -204,6 +211,16 @@ void SubServer::spawnVesselForPlayer(PlayerID player)
     sendMessageToPlayer(player, std::make_shared<SetCurrentVesselMessage>(newVesselID));
 }
 
+void SubServer::despawnVessel(VesselID vessel)
+{
+    auto message = std::make_shared<DespawnMessage>(vessel);
+    for (auto& clientKV : mClients)
+    {
+        sendMessageToPlayer(clientKV.first, message);
+    }
+    message->execute();
+}
+
 bool SubServer::sendMessageToPlayer(PlayerID player, std::shared_ptr<Message> message)
 {
     BOOST_ASSERT_MSG(mClients.count(player) > 0, "Fatal: Player doesn't exist or disconnected.");
@@ -217,5 +234,5 @@ void SubServer::kickPlayer(PlayerID player)
     //TODO: maybe send a disconnect message.
     mClients.erase(player);
 
-    subDebug << "Kicked player: " << player << " for network problems." << std::endl;
+    subDebug << "Kicked player: " << player << std::endl;
 }
