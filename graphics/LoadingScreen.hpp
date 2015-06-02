@@ -35,7 +35,7 @@ class SubSocket;
 class LoadingScreen : public SubScreen
 {
 public:
-    LoadingScreen(SubWindow* subWindow);
+    LoadingScreen(SubWindow& subWindow);
     virtual ~LoadingScreen();
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
@@ -43,7 +43,7 @@ public:
     void updateScreen(float dt);
 
 private:
-    SubWindow* mSubWindow;
+    SubWindow& mSubWindow;
 
     //Stuff required to load and connect asynchronously.
     std::unique_ptr<std::thread> mLoadingThread;

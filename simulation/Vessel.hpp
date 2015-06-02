@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "graphics/SubWindow.hpp"
 #include "physics/CapsuleShape.hpp"
 #include "simulation/VesselState.hpp"
 #include "network/SpawnMessage.hpp"
@@ -65,5 +66,5 @@ public:
 
     //Updates the UI. Subclasses of VesselUI will keep references to their widgets
     //so that they can do things here, like command a new bearing or depth.
-    virtual void updateUI(double dt) = 0;
+    virtual void updateUI(double dt, SubWindow& subWindow) = 0;
 };

@@ -43,7 +43,7 @@ public:
         {
             delete mCurrentScreen;
         }
-        mCurrentScreen = new NewScreen(this);
+        mCurrentScreen = new NewScreen(*this);
         mCurrentScreen->setupScreen(mDesktop, args);
     }
 

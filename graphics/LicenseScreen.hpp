@@ -28,7 +28,7 @@ class SubWindow;
 class LicenseScreen : public SubScreen
 {
 public:
-    LicenseScreen(SubWindow* subWindow);
+    LicenseScreen(SubWindow& subWindow);
     virtual ~LicenseScreen();
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
@@ -36,7 +36,7 @@ public:
     void updateScreen(float dt);
 
 private:
-    SubWindow* mSubWindow;
+    SubWindow& mSubWindow;
     sfg::Window::Ptr mLicenseWindow;
 
     void backHandler();

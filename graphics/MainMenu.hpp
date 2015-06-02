@@ -28,7 +28,7 @@ class SubWindow;
 class MainMenu : public SubScreen
 {
 public:
-    MainMenu(SubWindow* subWindow);
+    MainMenu(SubWindow& subWindow);
     virtual ~MainMenu();
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
@@ -36,7 +36,7 @@ public:
     void updateScreen(float dt);
 
 private:
-    SubWindow* mSubWindow;
+    SubWindow& mSubWindow;
 
     sfg::Window::Ptr mMainWindow;
     sfg::Window::Ptr mConnectWindow;

@@ -28,7 +28,7 @@ class SubWindow;
 class GameScreen : public SubScreen
 {
 public:
-    GameScreen(SubWindow* subWindow);
+    GameScreen(SubWindow& subWindow);
     ~GameScreen();
 
     void setupScreen(sfg::Desktop& desktop, std::vector<std::string> args);
@@ -39,7 +39,7 @@ private:
 
     void quitHandler();
 
-    SubWindow* mSubWindow;
+    SubWindow& mSubWindow;
 
     sfg::Window::Ptr mGameWindow;
     sfg::Widget::Ptr mVesselWidget;

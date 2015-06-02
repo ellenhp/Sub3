@@ -180,13 +180,11 @@ void USMLManager::usmlLoop()
     setRunning(true);
     while (getContinuing())
     {
-        subDebug << "doing a thing" << std::endl;
         //Eventually do something more refined than this.
         auto gameManager = GameManager::getCurrent().lock();
         BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
 
         ensureDataAround(mEmitterPosition);
-        subDebug << "finishing a thing" << std::endl;
 
         if (mTargets.size() > 0)
         {

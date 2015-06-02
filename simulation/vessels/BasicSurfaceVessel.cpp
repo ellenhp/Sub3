@@ -111,7 +111,7 @@ std::shared_ptr<sfg::Widget> BasicSurfaceVessel::UI::setupUI()
     return box;
 }
 
-void BasicSurfaceVessel::UI::updateUI(double dt)
+void BasicSurfaceVessel::UI::updateUI(double dt, SubWindow& subWindow)
 {
     auto vessel = mVessel.lock();
     if (vessel)

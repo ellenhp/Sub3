@@ -18,6 +18,7 @@
 
 #include "BasicSubmarine.hpp"
 
+#include "graphics/MainMenu.hpp"
 #include "simulation/BroadbandState.hpp"
 #include "simulation/GameManager.hpp"
 
@@ -133,7 +134,7 @@ std::shared_ptr<sfg::Widget> BasicSubmarine::UI::setupUI()
     return navigationBox;
 }
 
-void BasicSubmarine::UI::updateUI(double dt)
+void BasicSubmarine::UI::updateUI(double dt, SubWindow& subWindow)
 {
     auto vessel = mVessel.lock();
     if (vessel)
@@ -193,6 +194,6 @@ void BasicSubmarine::UI::updateUI(double dt)
     }
     else
     {
-        subDebug << "fixme2" << std::endl;
+        subWindow.switchToScreen<MainMenu>();
     }
 }

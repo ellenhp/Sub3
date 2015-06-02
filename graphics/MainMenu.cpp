@@ -23,7 +23,7 @@
 #include "graphics/LoadingScreen.hpp"
 
 //Keep around the SubWindow pointer for event handling purposes.
-MainMenu::MainMenu(SubWindow* subWindow) :
+MainMenu::MainMenu(SubWindow& subWindow) :
     mSubWindow(subWindow), mMainWindow(NULL), mConnectWindow(NULL),
     mIpEntry(NULL), mPortEntry(NULL)
 {
@@ -77,11 +77,11 @@ void MainMenu::updateScreen(float dt)
 {
     static int lastWidth = 0;
     static int lastHeight = 0;
-    if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
+    if (mSubWindow.getWidth() != lastWidth || mSubWindow.getHeight() != lastHeight)
     {
         centerWindow();
-        lastWidth = mSubWindow->getWidth();
-        lastHeight = mSubWindow->getHeight();
+        lastWidth = mSubWindow.getWidth();
+        lastHeight = mSubWindow.getHeight();
     }
 }
 
@@ -125,8 +125,8 @@ void MainMenu::playHandler()
     //Center the window then add it to the desktop.
     float width = mConnectWindow->GetAllocation().width;
     float height = mConnectWindow->GetAllocation().height;
-    float winX = (mSubWindow->getWidth() - width) / 2;
-    float winY = (mSubWindow->getHeight() - height) / 2;
+    float winX = (mSubWindow.getWidth() - width) / 2;
+    float winY = (mSubWindow.getHeight() - height) / 2;
     mConnectWindow->SetAllocation({winX, winY, width, height});
 
     mDesktop->Add(mConnectWindow);
@@ -134,12 +134,12 @@ void MainMenu::playHandler()
 
 void MainMenu::licenseHandler()
 {
-    mSubWindow->switchToScreen<LicenseScreen>();
+    mSubWindow.switchToScreen<LicenseScreen>();
 }
 
 void MainMenu::quitHandler()
 {
-    mSubWindow->quit();
+    mSubWindow.quit();
 }
 
 void MainMenu::playConnectHandler()
@@ -148,7 +148,7 @@ void MainMenu::playConnectHandler()
     if (port > 0 && port < 0xFFFF)
     {
         mDesktop->Remove(mConnectWindow);
-        mSubWindow->switchToScreen<LoadingScreen>({mIpEntry->GetText(), mPortEntry->GetText()});
+        mSubWindow.switchToScreen<LoadingScreen>({mIpEntry->GetText(), mPortEntry->GetText()});
     }
     else
     {
@@ -169,7 +169,7 @@ void MainMenu::centerWindow()
     //Center the window.
     float width = mMainWindow->GetAllocation().width;
     float height = mMainWindow->GetAllocation().height;
-    float winX = (mSubWindow->getWidth() - width) / 2;
-    float winY = (mSubWindow->getHeight() - height) / 2;
+    float winX = (mSubWindow.getWidth() - width) / 2;
+    float winY = (mSubWindow.getHeight() - height) / 2;
     mMainWindow->SetAllocation({winX, winY, width, height});
 }

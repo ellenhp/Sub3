@@ -41,7 +41,7 @@ using usml::netcdf::netcdf_woa;
 using usml::netcdf::netcdf_bathy;
 using namespace usml::ocean;
 
-LoadingScreen::LoadingScreen(SubWindow* subWindow) :
+LoadingScreen::LoadingScreen(SubWindow& subWindow) :
     mSubWindow(subWindow), mLoadingDone(false), mLaunchGame(false), mLoadingWindow(NULL)
 {
 }
@@ -114,7 +114,7 @@ void LoadingScreen::updateScreen(float dt)
         BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
         gameManager->setSocket(mGameSocket);
 
-        mSubWindow->switchToScreen<GameScreen>();
+        mSubWindow.switchToScreen<GameScreen>();
         return;
     }
 
@@ -126,8 +126,8 @@ void LoadingScreen::centerWindow()
     //Center the window.
     float width = mLoadingWindow->GetAllocation().width;
     float height = mLoadingWindow->GetAllocation().height;
-    float winX = (mSubWindow->getWidth() - width) / 2;
-    float winY = (mSubWindow->getHeight() - height) / 2;
+    float winX = (mSubWindow.getWidth() - width) / 2;
+    float winY = (mSubWindow.getHeight() - height) / 2;
     mLoadingWindow->SetAllocation({winX, winY, width, height});
 }
 

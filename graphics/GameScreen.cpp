@@ -27,7 +27,7 @@
 
 #include <sstream>
 
-GameScreen::GameScreen(SubWindow* subWindow) :
+GameScreen::GameScreen(SubWindow& subWindow) :
     mSubWindow(subWindow), mGameWindow(NULL), mVesselWidget(NULL), mVesselUI(NULL)
 {
 }
@@ -94,15 +94,15 @@ void GameScreen::updateScreen(float dt)
 {
     if (mVesselWidget)
     {
-        mVesselUI->updateUI(dt);
+        mVesselUI->updateUI(dt, mSubWindow);
     }
     static int lastWidth = 0;
     static int lastHeight = 0;
-    if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
+    if (mSubWindow.getWidth() != lastWidth || mSubWindow.getHeight() != lastHeight)
     {
         fillWindow();
-        lastWidth = mSubWindow->getWidth();
-        lastHeight = mSubWindow->getHeight();
+        lastWidth = mSubWindow.getWidth();
+        lastHeight = mSubWindow.getHeight();
     }
 
     auto gameManager = GameManager::getCurrent().lock();
@@ -113,15 +113,14 @@ void GameScreen::updateScreen(float dt)
 void GameScreen::fillWindow()
 {
     //Center the window.
-    float width = 0.8f * mSubWindow->getWidth();
-    float height = 0.8f * mSubWindow->getHeight();
-    float winX = 0.1f * mSubWindow->getWidth();
-    float winY = 0.1f * mSubWindow->getHeight();
+    float width = 0.8f * mSubWindow.getWidth();
+    float height = 0.8f * mSubWindow.getHeight();
+    float winX = 0.1f * mSubWindow.getWidth();
+    float winY = 0.1f * mSubWindow.getHeight();
     mGameWindow->SetAllocation({winX, winY, width, height});
-
 }
 
 void GameScreen::quitHandler()
 {
-    mSubWindow->switchToScreen<MainMenu>();
+    mSubWindow.switchToScreen<MainMenu>();
 }

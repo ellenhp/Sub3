@@ -24,7 +24,7 @@
 #include <fstream>
 #include <sstream>
 
-LicenseScreen::LicenseScreen(SubWindow* subWindow) :
+LicenseScreen::LicenseScreen(SubWindow& subWindow) :
     mSubWindow(subWindow)
 {
 }
@@ -72,11 +72,11 @@ void LicenseScreen::updateScreen(float dt)
 {
     static int lastWidth = 0;
     static int lastHeight = 0;
-    if (mSubWindow->getWidth() != lastWidth || mSubWindow->getHeight() != lastHeight)
+    if (mSubWindow.getWidth() != lastWidth || mSubWindow.getHeight() != lastHeight)
     {
         centerWindow();
-        lastWidth = mSubWindow->getWidth();
-        lastHeight = mSubWindow->getHeight();
+        lastWidth = mSubWindow.getWidth();
+        lastHeight = mSubWindow.getHeight();
     }
 }
 
@@ -85,12 +85,12 @@ void LicenseScreen::centerWindow()
     //Center the window.
     float width = mLicenseWindow->GetAllocation().width;
     float height = mLicenseWindow->GetAllocation().height;
-    float winX = (mSubWindow->getWidth() - width) / 2;
-    float winY = (mSubWindow->getHeight() - height) / 2;
+    float winX = (mSubWindow.getWidth() - width) / 2;
+    float winY = (mSubWindow.getHeight() - height) / 2;
     mLicenseWindow->SetAllocation({winX, winY, width, height});
 }
 
 void LicenseScreen::backHandler()
 {
-    mSubWindow->switchToScreen<MainMenu>();
+    mSubWindow.switchToScreen<MainMenu>();
 }

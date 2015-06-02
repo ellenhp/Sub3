@@ -58,7 +58,7 @@ public:
     virtual ~UI();
 
     std::shared_ptr<sfg::Widget> setupUI();
-    void updateUI(double dt);
+    void updateUI(double dt, SubWindow& subWindow);
 
 private:
     sfg::SpinButton::Ptr mHeading;
