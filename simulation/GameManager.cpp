@@ -29,6 +29,7 @@ std::shared_ptr<GameManager> GameManager::gameInst = NULL;
 GameManager::GameManager() :
     mSocket(NULL), mHasSetPlayer(false), mHasSetVessel(false)
 {
+    mUsmlManager = std::make_shared<USMLManager>();
     mLastUpdate = std::chrono::steady_clock::now();
 }
 
@@ -50,6 +51,11 @@ PlayerID GameManager::getPlayerID()
 VesselID GameManager::getCurrentVesselID()
 {
     return mCurrentVessel;
+}
+
+std::shared_ptr<USMLManager> GameManager::getUsmlManager()
+{
+    return mUsmlManager;
 }
 
 std::shared_ptr<Vessel> GameManager::getCurrentVessel()
@@ -90,7 +96,7 @@ void GameManager::startGame()
 {
     subDebug << "Starting game" << std::endl;
     //Kick off the USML thread.
-    USMLManager::getInstance()->start(getCurrentVesselID());
+    mUsmlManager->start(getCurrentVesselID());
 }
 
 void GameManager::tick(float dt)
@@ -103,10 +109,26 @@ void GameManager::tick(float dt)
     }
 
     //Ensure the area around the player is loaded.
-    if (Ocean::getOcean()->getHasVessel(mCurrentVessel))
+    if (isAlive())
     {
+        //Let USML know where we are.
         auto currentPos = getCurrentVessel()->getState().getLocation();
-        USMLManager::getInstance()->ensureDataAround(currentPos, false);
+        mUsmlManager->updateListenerPosition(currentPos);
+
+        //Now figure out who we're listening for.
+        auto sourceIDs = Ocean::getOcean()->getNearestVesselIDs(mUsmlManager->maxTime * 1500);
+
+        //Fill the map.
+        std::map<VesselID, VesselState> sources;
+        for (auto id : sourceIDs)
+        {
+            sources[id] = Ocean::getOcean()->getState(id);
+        }
+
+        //Remove own vessel.
+        sources.erase(mCurrentVessel);
+
+        mUsmlManager->updateSources(sources);
     }
 
     //Conditionally update the server on our state.
@@ -144,7 +166,7 @@ void GameManager::endGame()
 
     //Stop the USML thread and record how much time it took.
     auto startTime = std::chrono::high_resolution_clock::now();
-    USMLManager::getInstance()->stop();
+    mUsmlManager->stop();
     auto duration = std::chrono::high_resolution_clock::now() - startTime;
 
     subDebug << "USML thread join took " << seconds(duration).count() << "sec" << std::endl;

@@ -21,6 +21,7 @@
 #include <memory>
 #include <chrono>
 
+#include "simulation/USMLManager.hpp"
 #include "simulation/PlayerID.hpp"
 #include "simulation/VesselID.hpp"
 
@@ -57,9 +58,12 @@ public:
     void tick(float dt);
     void endGame();
 
+    std::shared_ptr<USMLManager> getUsmlManager();
+
 private:
     static std::shared_ptr<GameManager> gameInst;
 
+    std::shared_ptr<USMLManager> mUsmlManager;
     std::shared_ptr<SubSocket> mSocket;
 
     PlayerID mPlayer;

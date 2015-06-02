@@ -20,6 +20,7 @@
 
 #include "simulation/Position.hpp"
 #include "simulation/VesselID.hpp"
+#include "simulation/VesselState.hpp"
 #include "Sub3.hpp"
 
 #include <thread>
@@ -34,12 +35,7 @@
 class USMLManager
 {
 public:
-    //This is a singleton.
-    static USMLManager* getInstance();
-
-    //Ensures oceanic data is loaded near the specified position.
-    //This blocks until loading is finished if waitForLoading is true or if data has not been loaded before in this area.
-    void ensureDataAround(Position pos, bool waitForLoading);
+    USMLManager();
 
     //Starts a thread that will continuously calculate propagation loss.
     void start(VesselID listener, double range = 100000);
@@ -50,26 +46,41 @@ public:
     //Stops the thread and waits for it to end (blocks for a short while).
     void stop();
 
+    //Semantically a listener. Internally this is a source.
+    void updateListenerPosition(Position pos);
+
+    //Semantically the sources. Internally these are targets.
+    void updateSources(std::map<VesselID, VesselState> targets);
+
     //Gets a copy of the eigenray map.
     std::map<VesselID, usml::waveq3d::eigenray> getEigenrayMap();
 
+    const double maxTime = 20; //20s * 1500m/s is 30km straight-line. Should be fine for now.
+
 private:
-    USMLManager();
+    //Ensures oceanic data is loaded near the specified position.
+    void ensureDataAround(Position pos);
 
     //Loads oceanic data around the specified Position.
     void loadDataAround(Position pos);
 
     void usmlLoop();
-    void usmlCalculate(VesselID emitter, std::vector<VesselID> listeners);
+    void usmlCalculate();
 
     bool getContinuing();
     void setRunning(bool running);
 
-    static USMLManager* inst;
-
     std::thread mUsmlThread;
+
+    //This to let people tell us to stop.
     std::mutex mContinueMutex;
 
+    //This is to let GameManager update the position to propagate from and the targets to propagate to.
+    std::mutex mUpdatePositionsMutex;
+    Position mEmitterPosition;
+    std::map<VesselID, VesselState> mTargets;
+
+    //These are required to get eigenray information out.
     std::map<VesselID, usml::waveq3d::eigenray> mEigenrayMap;
     std::mutex mEigenrayMutex;
 
@@ -82,12 +93,7 @@ private:
     //The center of the area we loaded oceanic data for.
     Position mDataCenter;
 
-    //Mutex for mLoadedData and mDataCenter.
-    std::mutex mOceanicDataMutex;
-
-    const double maxTime = 20; //20s * 1500m/s is 30km straight-line. Should be fine for now.
     const double timeStep = 0.1;
     const double loadDistance = 1000000; //1000km should be plenty.
     const double reloadDistance = 200000; //1000km - 200km = 800km nominal minimum distance, which is fine.
-    const double minDistance = 5000000; //100km - 500km = 500km absolute minimum, which is fine.
 };

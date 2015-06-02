@@ -19,7 +19,7 @@
 #include "BasicSubmarine.hpp"
 
 #include "simulation/BroadbandState.hpp"
-#include "simulation/USMLManager.hpp"
+#include "simulation/GameManager.hpp"
 
 #include <sstream>
 #include <iomanip>
@@ -162,7 +162,9 @@ void BasicSubmarine::UI::updateUI(double dt)
 
         BroadbandState state(0.3f, 0.3f, 5.0f);
 
-        auto eigenrayMap = USMLManager::getInstance()->getEigenrayMap();
+        std::shared_ptr<GameManager> gameManager = GameManager::getCurrent().lock();
+        BOOST_ASSERT_MSG(gameManager, "GameManager null");
+        auto eigenrayMap = gameManager->getUsmlManager()->getEigenrayMap();
 
         //Iterate through all contacts we can hear.
         for (auto& contactKV : eigenrayMap)

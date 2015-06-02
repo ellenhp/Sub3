@@ -39,20 +39,9 @@ using usml::waveq3d::wave_queue;
 using usml::waveq3d::eigenray_collection;
 using namespace usml::ocean;
 
-USMLManager* USMLManager::inst = NULL;
-
 USMLManager::USMLManager() :
     mRunning(false), mLoadedData(false)
 {
-}
-
-USMLManager* USMLManager::getInstance()
-{
-    if (!inst)
-    {
-        inst = new USMLManager();
-    }
-    return inst;
 }
 
 //Loads oceanographic data around pos.
@@ -105,52 +94,15 @@ void USMLManager::loadDataAround(Position pos)
     ocean_shared::reference ocean(new ocean_model(surface, bottom, profile));
     ocean_shared::update(ocean);
 
-    mOceanicDataMutex.lock();
     mLoadedData = true;
     mDataCenter = pos;
-    mOceanicDataMutex.unlock();
 }
 
-void USMLManager::ensureDataAround(Position pos, bool waitForLoading)
+void USMLManager::ensureDataAround(Position pos)
 {
-    bool loadedData;
-    Position dataCenter;
-
-    //Copy stuff into local variables.
-    mOceanicDataMutex.lock();
-    loadedData = mLoadedData;
-    dataCenter = mDataCenter;
-    mOceanicDataMutex.unlock();
-
-    if (!loadedData)
+    if (!mLoadedData || pos.distanceTo(mDataCenter) > reloadDistance)
     {
-        subDebug << "Haven't loaded data, doing it synchronously." << std::endl;
-        waitForLoading = true;
-    }
-    else
-    {
-        //Find the distance from the current position to the previous center;
-        double distance = pos.distanceTo(dataCenter);
-
-        //If data is already loaded, don't bother doing anything.
-        if (distance < reloadDistance)
-        {
-            return;
-        }
-
-        if (distance > minDistance)
-        {
-            //TODO test this or see if it's necessary.
-            subDebug << "Loaded data too far away, loading it synchronously." << std::endl;
-            waitForLoading = true;
-        }
-    }
-
-    auto loadingFuture = std::async(std::launch::async, &USMLManager::loadDataAround, this, pos);
-    if (waitForLoading)
-    {
-        //get() blocks until loadDataAround(pos) is done.
-        loadingFuture.get();
+        loadDataAround(pos);
     }
 }
 
@@ -158,12 +110,10 @@ void USMLManager::ensureDataAround(Position pos, bool waitForLoading)
 void USMLManager::start(VesselID listener, double range)
 {
     BOOST_ASSERT_MSG(!getRunning(), "Fatal: USML thread already running");
-    BOOST_ASSERT_MSG(mLoadedData, "Fatal: Haven't loaded oceanic data yet");
     mContinue = true;
     mUsmlThread = std::thread(&USMLManager::usmlLoop, this);
 }
 
-//Starts a thread that will continuously calculate propagation loss.
 void USMLManager::stop()
 {
     BOOST_ASSERT_MSG(getRunning(), "Fatal: USML thread not running");
@@ -211,40 +161,36 @@ bool USMLManager::getRunning()
     return running;
 }
 
+void USMLManager::updateListenerPosition(Position pos)
+{
+    mUpdatePositionsMutex.lock();
+    mEmitterPosition = pos;
+    mUpdatePositionsMutex.unlock();
+}
+
+void USMLManager::updateSources(std::map<VesselID, VesselState> targets)
+{
+    mUpdatePositionsMutex.lock();
+    mTargets = targets;
+    mUpdatePositionsMutex.unlock();
+}
+
 void USMLManager::usmlLoop()
 {
     setRunning(true);
     while (getContinuing())
     {
+        subDebug << "doing a thing" << std::endl;
         //Eventually do something more refined than this.
         auto gameManager = GameManager::getCurrent().lock();
         BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
 
-        auto ocean = Ocean::getOcean();
+        ensureDataAround(mEmitterPosition);
+        subDebug << "finishing a thing" << std::endl;
 
-        ocean->lockAccess();
-        bool isAlive = gameManager->isAlive();
-
-        if (!isAlive)
+        if (mTargets.size() > 0)
         {
-            //Immediately unlock.
-            ocean->unlockAccess();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            continue;
-        }
-
-        //Copy all the ID's we want to work with into local variables.
-        VesselID currentVessel = gameManager->getCurrentVesselID();
-        std::vector<VesselID> nearbyVessels = ocean->getNearestVesselIDs(maxTime * 1500);
-        ocean->unlockAccess();
-
-        //Don't listen for our own sound.
-        nearbyVessels.erase(std::remove(nearbyVessels.begin(), nearbyVessels.end(), currentVessel), nearbyVessels.end());
-
-        if (nearbyVessels.size() > 0)
-        {
-            usmlCalculate(currentVessel, nearbyVessels);
+            usmlCalculate();
         }
         else
         {
@@ -255,22 +201,24 @@ void USMLManager::usmlLoop()
 }
 
 //This method takes a while. To be called from usmlLoop() only.
-void USMLManager::usmlCalculate(VesselID emitter, std::vector<VesselID> listeners)
+void USMLManager::usmlCalculate()
 {
     auto ocean = Ocean::getOcean();
 
     //These local variables store the positions of the emitter and listener so we don't have to keep locking and unlocking.
-    Position emitterPosition;
+    std::vector<VesselID> listeners;
     std::vector<Position> listenerPositions;
 
     //Copy the positions to local variables.
-    ocean->lockAccess();
-    emitterPosition = ocean->getState(emitter).getLocation();
-    for (auto& listenerID : listeners)
+    //Don't let anyone change the positions when we do this.
+    mUpdatePositionsMutex.lock();
+    auto emitterPosition = mEmitterPosition;
+    for (auto& listenerKV : mTargets)
     {
-        listenerPositions.push_back(ocean->getState(listenerID).getLocation());
+        listeners.push_back(listenerKV.first);
+        listenerPositions.push_back(listenerKV.second.getLocation());
     }
-    ocean->unlockAccess();
+    mUpdatePositionsMutex.unlock();
 
     //Ceate the wposition object for the listeners.
     wposition wListeners(listenerPositions.size(), 1);

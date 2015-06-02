@@ -187,7 +187,7 @@ void LoadingScreen::doLoading()
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
 
-        //Now we'll let the main thread know we're ready.
+        //TODO: Return to the main menu.
         mLoadingMutex.lock();
         mLaunchGame = true;
         mLoadingMutex.unlock();
@@ -195,26 +195,14 @@ void LoadingScreen::doLoading()
     }
 
     mLoadingMutex.lock();
-    mLoadingText = "Loading Oceanographic Data...";
-    mLoadingMutex.unlock();
-
-    subDebug << "Loading Oceanographic Data..." << std::endl;
-
-    //Let the USMLManager do the loading.
-    BOOST_ASSERT_MSG(gameManager->isAlive(), "Fatal: not alive to load oceanographic data");
-    auto pos = gameManager->getCurrentVessel()->getState().getLocation();
-    USMLManager::getInstance()->ensureDataAround(pos, true);
-
-    subDebug << "Done loading Oceanographic Data..." << std::endl;
-
-    mLoadingMutex.lock();
     mLoadingText = "Done!";
+    mLaunchGame = true;
     mLoadingDone = true;
     mLoadingMutex.unlock();
 
     //Give the user some time to read the message we just showed them.
     //But make sure we keep pulling messages off the networking buffer.
-    auto endTime = steady_clock::now() + std::chrono::milliseconds(1500);
+    auto endTime = steady_clock::now() + std::chrono::milliseconds(750);
     while (steady_clock::now() < endTime)
     {
         mGameSocket->hasPackets();
