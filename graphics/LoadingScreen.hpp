@@ -23,8 +23,7 @@
 
 #include <SFGUI/Widgets.hpp>
 
-#include <thread>
-#include <mutex>
+#include <future>
 
 #include <usml/ocean/ocean_shared.h>
 
@@ -46,26 +45,14 @@ private:
     SubWindow& mSubWindow;
 
     //Stuff required to load and connect asynchronously.
-    std::unique_ptr<std::thread> mLoadingThread;
-    std::mutex mLoadingMutex;
-    bool mLoadingDone;
-    bool mLaunchGame;
-
-    std::shared_ptr<SubSocket> mGameSocket;
-    std::shared_ptr<usml::ocean::ocean_shared> mGameOcean;
-
-    std::string mLoadingText;
+    std::future<std::shared_ptr<SubSocket>> mLoadingFuture;
 
     sfg::Spinner::Ptr mSpinner;
     sfg::Label::Ptr mLabel;
     sfg::Window::Ptr mLoadingWindow;
 
-    std::string mIpAddress;
-    uint16_t mPortNumber;
-
     void centerWindow();
 
-    void doLoading();
-
+    std::shared_ptr<SubSocket> doLoading(std::string ip, uint16_t port);
 
 };

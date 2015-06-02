@@ -20,6 +20,7 @@
 
 #include "graphics/SubWindow.hpp"
 #include "graphics/GameScreen.hpp"
+#include "graphics/MainMenu.hpp"
 #include "network/SubSocket.hpp"
 #include "simulation/GameManager.hpp"
 #include "simulation/USMLManager.hpp"
@@ -42,27 +43,25 @@ using usml::netcdf::netcdf_bathy;
 using namespace usml::ocean;
 
 LoadingScreen::LoadingScreen(SubWindow& subWindow) :
-    mSubWindow(subWindow), mLoadingDone(false), mLaunchGame(false), mLoadingWindow(NULL)
+    mSubWindow(subWindow), mLoadingWindow(NULL)
 {
 }
 
 LoadingScreen::~LoadingScreen()
 {
-    mLoadingThread = NULL;
-    mLoadingWindow = NULL;
 }
 
 void LoadingScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> args)
 {
     //Load the IP and port number.
     BOOST_ASSERT_MSG(args.size() == 2, "Fatal: LoadingScreen initialized incorrectly.");
-    mIpAddress = args[0];
-    mPortNumber = stoi(args[1]);
+    auto ipAddress = args[0];
+    auto portNumber = stoi(args[1]);
 
-    subDebug << "Connecting to " << mIpAddress << ":" << mPortNumber << std::endl;
+    subDebug << "Connecting to " << ipAddress << ":" << portNumber << std::endl;
 
     //Kick off the loading thread.
-    mLoadingThread = std::unique_ptr<std::thread>(new std::thread(&LoadingScreen::doLoading, this));
+    mLoadingFuture = std::async(std::launch::async, &LoadingScreen::doLoading, this, ipAddress, portNumber);
 
     //sfg::Box is for layout purposes.
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -72,7 +71,7 @@ void LoadingScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> 
     mSpinner->Start();
 
     //Loading label.
-    mLabel = sfg::Label::Create("");
+    mLabel = sfg::Label::Create("Connecting to game");
 
     //Layout the widgets.
     box->Pack(mSpinner);
@@ -90,31 +89,26 @@ void LoadingScreen::setupScreen(sfg::Desktop& desktop, std::vector<std::string> 
 
 void LoadingScreen::updateScreen(float dt)
 {
-    mLoadingMutex.lock();
-    mLabel->SetText(mLoadingText);
-    mLoadingMutex.unlock();
+    auto loadStatus = mLoadingFuture.wait_for(std::chrono::microseconds(5));
 
-    mLoadingMutex.lock();
-    bool loadingDone = mLoadingDone;
-    bool launchGame = mLaunchGame;
-    mLoadingMutex.unlock();
-
-    if (loadingDone)
+    if (loadStatus == std::future_status::ready)
     {
-        mSpinner->Stop();
-    }
+        auto socket = mLoadingFuture.get();
+        if (socket == NULL)
+        {
+            subDebug << "Going back to main menu" << std::endl;
+            mSubWindow.switchToScreen<MainMenu>();
+        }
+        else
+        {
+            subDebug << "Starting game screen" << std::endl;
 
-    if (launchGame)
-    {
-        BOOST_ASSERT_MSG(mLoadingThread, "Fatal: LoadingScreen tried to join thread but it's null");
-        mLoadingThread->join();
-        subDebug << "Starting game screen" << std::endl;
+            auto gameManager = GameManager::getCurrent().lock();
+            BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
+            gameManager->setSocket(socket);
 
-        auto gameManager = GameManager::getCurrent().lock();
-        BOOST_ASSERT_MSG(gameManager, "Fatal: GameManager doesn't exist");
-        gameManager->setSocket(mGameSocket);
-
-        mSubWindow.switchToScreen<GameScreen>();
+            mSubWindow.switchToScreen<GameScreen>();
+        }
         return;
     }
 
@@ -131,18 +125,12 @@ void LoadingScreen::centerWindow()
     mLoadingWindow->SetAllocation({winX, winY, width, height});
 }
 
-void LoadingScreen::doLoading()
+std::shared_ptr<SubSocket> LoadingScreen::doLoading(std::string ip, uint16_t port)
 {
-    mLoadingMutex.lock();
-    mLoadingText = "Connecting to Game...";
-    auto copyIP = mIpAddress;
-    auto copyPort = mPortNumber;
-    mLoadingMutex.unlock();
-
     auto tcpSocket = std::make_shared<sf::TcpSocket>();
-    tcpSocket->connect(sf::IpAddress(copyIP), copyPort);
+    tcpSocket->connect(sf::IpAddress(ip), port);
 
-    mGameSocket = std::make_shared<SubSocket>(tcpSocket);
+    auto gameSocket = std::make_shared<SubSocket>(tcpSocket);
 
     auto gameManager = std::make_shared<GameManager>();
     GameManager::setCurrent(gameManager);
@@ -155,9 +143,9 @@ void LoadingScreen::doLoading()
         auto end_time = steady_clock::now() + std::chrono::milliseconds(100);
 
         std::shared_ptr<Message> message = NULL;
-        while (mGameSocket->hasPackets())
+        while (gameSocket->hasPackets())
         {
-            BOOST_ASSERT_MSG(*mGameSocket >> message, "Fatal: Failed to load init message");
+            BOOST_ASSERT_MSG(*gameSocket >> message, "Fatal: Failed to load init message");
             message->execute();
         }
 
@@ -170,49 +158,12 @@ void LoadingScreen::doLoading()
         std::this_thread::sleep_until(end_time);
     }
 
-    //Let the user know if the connection timed out.
-    if (!isInitialized)
+    //If we successfully connected, return the SubSocket.
+    if (isInitialized)
     {
-        mLoadingMutex.lock();
-        mLoadingText = "Connection Timed Out.";
-        mLoadingDone = true;
-        mLoadingMutex.unlock();
-
-        //Give the user some time to read the message we just showed them.
-        //But make sure we keep pulling messages off the networking buffer.
-        auto endTime = steady_clock::now() + std::chrono::milliseconds(1500);
-        while (steady_clock::now() < endTime)
-        {
-            mGameSocket->hasPackets();
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
-
-        //TODO: Return to the main menu.
-        mLoadingMutex.lock();
-        mLaunchGame = true;
-        mLoadingMutex.unlock();
-        return;
+        return gameSocket;
     }
 
-    mLoadingMutex.lock();
-    mLoadingText = "Done!";
-    mLaunchGame = true;
-    mLoadingDone = true;
-    mLoadingMutex.unlock();
-
-    //Give the user some time to read the message we just showed them.
-    //But make sure we keep pulling messages off the networking buffer.
-    auto endTime = steady_clock::now() + std::chrono::milliseconds(750);
-    while (steady_clock::now() < endTime)
-    {
-        mGameSocket->hasPackets();
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
-
-    //Now we'll let the main thread know we're ready.
-    mLoadingMutex.lock();
-    mLaunchGame = true;
-    mLoadingMutex.unlock();
-
-    subDebug << "Loading thread done" << std::endl;
+    //Otherwise return NULL.
+    return NULL;
 }
