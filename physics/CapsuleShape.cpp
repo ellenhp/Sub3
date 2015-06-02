@@ -109,7 +109,6 @@ double CapsuleShape::distanceBetweenCenterlines(CapsuleShape other) const
 
     if (denom < smallVal)
     {
-        subDebug << "Parallel" << std::endl;
         return distanceBetweenCenterlinesParallel(other);
     }
 
@@ -121,13 +120,9 @@ double CapsuleShape::distanceBetweenCenterlines(CapsuleShape other) const
     //Coordinate of an endpoint of the segment between the centerlines with basis vAxis2
     double coord2 = (dotDiffAxis2 + dotAxis1Axis2 * coord1) / axis2LengthSq;
 
-    subDebug << std::setprecision(4) << "coord1: " << coord1 << " coord2: " << coord2 << std::endl;
-
     //Clamp these to the centerline of the capsules.
     coord1 = clamp(coord1, 0, 1);
     coord2 = clamp(coord2, 0, 1);
-
-    subDebug << std::setprecision(4) << "coord1: " << coord1 << " coord2: " << coord2 << std::endl;
 
     //Closest points of approach.
     auto cpa1 = mCenter1 + vAxis1 * coord1;
