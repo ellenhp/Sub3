@@ -4,4 +4,4 @@ Sub^3 aims to be a realistic multiplayer submarine simulator. The goal of Sub^3 
 
 Current Status
 --------------
-Sub^3 is completely unplayable at the moment, but that should change! Development takes place at https://github.com/nopoe/Sub3
+Sub^3 is playable, depending on how you define "playable". You can do very basic submarine hide-and-seek, but that's about it. Development takes place at https://github.com/nopoe/Sub3
